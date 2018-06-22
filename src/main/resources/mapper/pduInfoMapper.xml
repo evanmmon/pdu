@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PduInfoMapper">
+    <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduInfo">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="pduID" jdbcType="INTEGER" property="pduid"/>
+        <result column="collectionTime" jdbcType="VARCHAR" property="collectiontime"/>
+        <result column="voltage" jdbcType="VARCHAR" property="voltage"/>
+        <result column="current" jdbcType="VARCHAR" property="current"/>
+        <result column="watt" jdbcType="VARCHAR" property="watt"/>
+        <result column="relayState" jdbcType="VARCHAR" property="relaystate"/>
+        <result column="overvoltage" jdbcType="VARCHAR" property="overvoltage"/>
+        <result column="undervoltage" jdbcType="VARCHAR" property="undervoltage"/>
+        <result column="overcurrent" jdbcType="VARCHAR" property="overcurrent"/>
+        <result column="circuitbreaker" jdbcType="VARCHAR" property="circuitbreaker"/>
+        <result column="electricleakage" jdbcType="VARCHAR" property="electricleakage"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="temperature" jdbcType="VARCHAR" property="temperature"/>
+        <result column="smoke" jdbcType="VARCHAR" property="smoke"/>
+        <result column="waterLevel" jdbcType="VARCHAR" property="waterLevel"/>
+
+        <result column="starttime" jdbcType="VARCHAR" property="starttime"/>
+        <result column="endtime" jdbcType="VARCHAR" property="endtime"/>
+
+        <result column="quantity" jdbcType="VARCHAR" property="quantity"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, pduID, collectionTime, voltage, current, watt, relayState, overvoltage, undervoltage, 
+    overcurrent, circuitbreaker, electricleakage,quantity,state, remark
+  </sql>
+
+    <select id="selectBwatt" parameterType="java.lang.Integer" resultType="java.lang.String">
+       SELECT watt from tb_pdu_info
+where pduID=#{pduid,jdbcType=INTEGER} order by ID desc limit 1
+
+    </select>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu_info
+        where ID = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_pdu_info
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduInfo">
+    insert into tb_pdu_info (ID, pduID, collectionTime, 
+      voltage, current, watt, 
+      relayState, overvoltage, undervoltage, 
+      overcurrent, circuitbreaker, electricleakage, quantity,
+      state, remark)
+    values (#{id,jdbcType=INTEGER}, #{pduid,jdbcType=INTEGER}, #{collectiontime,jdbcType=VARCHAR}, 
+      #{voltage,jdbcType=VARCHAR}, #{current,jdbcType=VARCHAR}, #{watt,jdbcType=VARCHAR}, 
+      #{relaystate,jdbcType=VARCHAR}, #{overvoltage,jdbcType=VARCHAR}, #{undervoltage,jdbcType=VARCHAR}, 
+      #{overcurrent,jdbcType=VARCHAR}, #{circuitbreaker,jdbcType=VARCHAR}, #{electricleakage,jdbcType=VARCHAR},
+      #{quantity,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduInfo">
+        insert into tb_pdu_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="pduid != null">
+                pduID,
+            </if>
+            <if test="collectiontime != null">
+                collectionTime,
+            </if>
+            <if test="voltage != null">
+                voltage,
+            </if>
+            <if test="current != null">
+                current,
+            </if>
+            <if test="watt != null">
+                watt,
+            </if>
+            <if test="relaystate != null">
+                relayState,
+            </if>
+            <if test="overvoltage != null">
+                overvoltage,
+            </if>
+            <if test="undervoltage != null">
+                undervoltage,
+            </if>
+            <if test="overcurrent != null">
+                overcurrent,
+            </if>
+            <if test="circuitbreaker != null">
+                circuitbreaker,
+            </if>
+            <if test="electricleakage != null">
+                electricleakage,
+            </if>
+
+            <if test="quantity != null">
+                quantity,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="pduid != null">
+                #{pduid,jdbcType=INTEGER},
+            </if>
+            <if test="collectiontime != null">
+                #{collectiontime,jdbcType=VARCHAR},
+            </if>
+            <if test="voltage != null">
+                #{voltage,jdbcType=VARCHAR},
+            </if>
+            <if test="current != null">
+                #{current,jdbcType=VARCHAR},
+            </if>
+            <if test="watt != null">
+                #{watt,jdbcType=VARCHAR},
+            </if>
+            <if test="relaystate != null">
+                #{relaystate,jdbcType=VARCHAR},
+            </if>
+            <if test="overvoltage != null">
+                #{overvoltage,jdbcType=VARCHAR},
+            </if>
+            <if test="undervoltage != null">
+                #{undervoltage,jdbcType=VARCHAR},
+            </if>
+            <if test="overcurrent != null">
+                #{overcurrent,jdbcType=VARCHAR},
+            </if>
+            <if test="circuitbreaker != null">
+                #{circuitbreaker,jdbcType=VARCHAR},
+            </if>
+            <if test="electricleakage != null">
+                #{electricleakage,jdbcType=VARCHAR},
+            </if>
+
+            <if test="quantity != null">
+                #{quantity,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.PduInfo">
+        update tb_pdu_info
+        <set>
+            <if test="pduid != null">
+                pduID = #{pduid,jdbcType=INTEGER},
+            </if>
+            <if test="collectiontime != null">
+                collectionTime = #{collectiontime,jdbcType=VARCHAR},
+            </if>
+            <if test="voltage != null">
+                voltage = #{voltage,jdbcType=VARCHAR},
+            </if>
+            <if test="current != null">
+                current = #{current,jdbcType=VARCHAR},
+            </if>
+            <if test="watt != null">
+                watt = #{watt,jdbcType=VARCHAR},
+            </if>
+            <if test="relaystate != null">
+                relayState = #{relaystate,jdbcType=VARCHAR},
+            </if>
+            <if test="overvoltage != null">
+                overvoltage = #{overvoltage,jdbcType=VARCHAR},
+            </if>
+            <if test="undervoltage != null">
+                undervoltage = #{undervoltage,jdbcType=VARCHAR},
+            </if>
+            <if test="overcurrent != null">
+                overcurrent = #{overcurrent,jdbcType=VARCHAR},
+            </if>
+            <if test="circuitbreaker != null">
+                circuitbreaker = #{circuitbreaker,jdbcType=VARCHAR},
+            </if>
+            <if test="electricleakage != null">
+                electricleakage = #{electricleakage,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null">
+                quantity = #{quantity,jdbcType=VARCHAR},
+            </if>
+
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduInfo">
+    update tb_pdu_info
+    set pduID = #{pduid,jdbcType=INTEGER},
+      collectionTime = #{collectiontime,jdbcType=VARCHAR},
+      voltage = #{voltage,jdbcType=VARCHAR},
+      current = #{current,jdbcType=VARCHAR},
+      watt = #{watt,jdbcType=VARCHAR},
+      relayState = #{relaystate,jdbcType=VARCHAR},
+      overvoltage = #{overvoltage,jdbcType=VARCHAR},
+      undervoltage = #{undervoltage,jdbcType=VARCHAR},
+      overcurrent = #{overcurrent,jdbcType=VARCHAR},
+      circuitbreaker = #{circuitbreaker,jdbcType=VARCHAR},
+      electricleakage = #{electricleakage,jdbcType=VARCHAR},
+      quantity = #{quantity,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+
+    <select id="selectAllByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduInfo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu_info
+        where pduID = #{pduid,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="selectAllByHistoryData" parameterType="com.chuangkou.pdu.entity.PduInfo" resultMap="BaseResultMap">
+    select
+      DATE_FORMAT(collectionTime,'%Y-%m-%d')as collectionTime ,
+      TRUNCATE(avg(voltage),1) as voltage,TRUNCATE(avg(current),1) as current, TRUNCATE(avg(watt),1) as watt,TRUNCATE(avg(quantity),1) as quantity
+    from tb_pdu_info
+    where pduID = #{pduid,jdbcType=INTEGER}
+          AND DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss') &gt; #{starttime,jdbcType=VARCHAR}
+          AND DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss') &lt; #{endtime,jdbcType=VARCHAR}
+    GROUP BY DATE_FORMAT(collectionTime,'%Y-%m-%d')
+
+  </select>
+
+    <select id="selectAllByHistoryHours" parameterType="com.chuangkou.pdu.entity.PduInfo" resultMap="BaseResultMap">
+        select
+        DATE_FORMAT(collectionTime,'%Y-%m-%d %H:00:00') as collectionTime ,TRUNCATE(avg(voltage),1) as voltage,
+        TRUNCATE(avg(current),1) as current, TRUNCATE(avg(watt),1) as watt, TRUNCATE(avg(quantity),1) as quantity
+        from tb_pdu_info
+        where
+              pduID = #{pduid,jdbcType=INTEGER}
+              and DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss')  &gt; #{starttime,jdbcType=VARCHAR}
+              and DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss') &lt; #{endtime,jdbcType=VARCHAR}
+        GROUP BY DATE_FORMAT(collectionTime,'%Y-%m-%d %H:00:00')
+
+    </select>
+
+
+
+    <select id="selectByHoursAVG" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select Round(avg(voltage),1) as voltage,Round(avg(current),3) as current,
+        Round(avg(watt),0) as watt, Round(avg(quantity),0) as quantity
+        from tb_pdu_info
+        where collectionTime >= DATE_SUB(NOW(), INTERVAL 1 HOUR)  and pduID = #{pduid,jdbcType=INTEGER}
+    </select>
+</mapper>

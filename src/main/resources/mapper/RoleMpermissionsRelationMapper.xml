@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.RoleMpermissionsRelationMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.RoleMpermissionsRelation">
+    <result column="roleID" jdbcType="INTEGER" property="roleid" />
+    <result column="mpermissionsID" jdbcType="INTEGER" property="mpermissionsid" />
+  </resultMap>
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.RoleMpermissionsRelation">
+    insert into tb_role_mpermissions_relation (roleID, mpermissionsID)
+    values (#{roleid,jdbcType=INTEGER}, #{mpermissionsid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.RoleMpermissionsRelation">
+    insert into tb_role_mpermissions_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleid != null">
+        roleID,
+      </if>
+      <if test="mpermissionsid != null">
+        mpermissionsID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleid != null">
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="mpermissionsid != null">
+        #{mpermissionsid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

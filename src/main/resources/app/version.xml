@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <data>
+        <download_url>http://192.168.1.118:8888/app/PDU_5_23_V1.0.apk</download_url>
+        <version_code>3</version_code>
+        <version_name>1.2</version_name>
+        <Description>1、运行和关闭设备列表合并 2、优化速度 3、修改状态顺序 4、增加空开预警设置 5、增加电量分析 6、乱码问题</Description>
+        <length>15411083</length>
+        <update_time>1521166664298</update_time>
+    </data>
+    
+    <!-- 
+     <data>
+        <download_url>http://192.168.1.101:8080/app/PDU_5_22.apk</download_url>
+        <version_code>2</version_code>
+        <version_name>1.1</version_name>
+        <Description>1、增加自动更新功能 2、增加用电量分析 3、增加老化分析 4、修复关闭设备没有显示电压问题</Description>
+        <length>15400738</length>
+        <update_time>1521166664298</update_time>
+    </data>   
+    -->
+   
+</root>

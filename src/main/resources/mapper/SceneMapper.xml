@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chuangkou.pdu.dao.SceneMapper" >
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.Scene" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="sceneName" property="scenename" jdbcType="VARCHAR" />
+    <result column="detailed" property="detailed" jdbcType="VARCHAR" />
+    <result column="startTime" property="starttime" jdbcType="VARCHAR" />
+    <result column="endTime" property="endtime" jdbcType="VARCHAR" />
+    <result column="repeatDay" property="repeatday" jdbcType="VARCHAR" />
+    <result column="voltage" property="voltage" jdbcType="VARCHAR" />
+    <result column="current" property="current" jdbcType="VARCHAR" />
+    <result column="watt" property="watt" jdbcType="VARCHAR" />
+    <result column="overvoltage" property="overvoltage" jdbcType="VARCHAR" />
+    <result column="undervoltage" property="undervoltage" jdbcType="VARCHAR" />
+    <result column="overcurrent" property="overcurrent" jdbcType="VARCHAR" />
+    <result column="circuitbreaker" property="circuitbreaker" jdbcType="VARCHAR" />
+    <result column="electricleakage" property="electricleakage" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="pduId" property="pduId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, sceneName, detailed, startTime, endTime, repeatDay, voltage, current, watt, overvoltage,
+    undervoltage, overcurrent, circuitbreaker, electricleakage, state, remark
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.chuangkou.pdu.entity.SceneExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tb_scene
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_scene
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_scene
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.chuangkou.pdu.entity.SceneExample" >
+    delete from tb_scene
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.Scene" >
+    insert into tb_scene (ID, sceneName, detailed,
+    startTime, endTime, repeatDay,
+    voltage, current, watt,
+    overvoltage, undervoltage, overcurrent,
+    circuitbreaker, electricleakage, state,
+    remark)
+    values (#{id,jdbcType=INTEGER}, #{scenename,jdbcType=VARCHAR}, #{detailed,jdbcType=VARCHAR},
+    #{starttime,jdbcType=VARCHAR}, #{endtime,jdbcType=VARCHAR}, #{repeatday,jdbcType=VARCHAR},
+    #{voltage,jdbcType=VARCHAR}, #{current,jdbcType=VARCHAR}, #{watt,jdbcType=VARCHAR},
+    #{overvoltage,jdbcType=VARCHAR}, #{undervoltage,jdbcType=VARCHAR}, #{overcurrent,jdbcType=VARCHAR},
+    #{circuitbreaker,jdbcType=VARCHAR}, #{electricleakage,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.Scene" >
+    <!--主键返回-->
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_scene
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="scenename != null" >
+        sceneName,
+      </if>
+      <if test="detailed != null" >
+        detailed,
+      </if>
+      <if test="starttime != null" >
+        startTime,
+      </if>
+      <if test="endtime != null" >
+        endTime,
+      </if>
+      <if test="repeatday != null" >
+        repeatDay,
+      </if>
+      <if test="voltage != null" >
+        voltage,
+      </if>
+      <if test="current != null" >
+        current,
+      </if>
+      <if test="watt != null" >
+        watt,
+      </if>
+      <if test="overvoltage != null" >
+        overvoltage,
+      </if>
+      <if test="undervoltage != null" >
+        undervoltage,
+      </if>
+      <if test="overcurrent != null" >
+        overcurrent,
+      </if>
+      <if test="circuitbreaker != null" >
+        circuitbreaker,
+      </if>
+      <if test="electricleakage != null" >
+        electricleakage,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="scenename != null" >
+        #{scenename,jdbcType=VARCHAR},
+      </if>
+      <if test="detailed != null" >
+        #{detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="repeatday != null" >
+        #{repeatday,jdbcType=VARCHAR},
+      </if>
+      <if test="voltage != null" >
+        #{voltage,jdbcType=VARCHAR},
+      </if>
+      <if test="current != null" >
+        #{current,jdbcType=VARCHAR},
+      </if>
+      <if test="watt != null" >
+        #{watt,jdbcType=VARCHAR},
+      </if>
+      <if test="overvoltage != null" >
+        #{overvoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="undervoltage != null" >
+        #{undervoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="overcurrent != null" >
+        #{overcurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="circuitbreaker != null" >
+        #{circuitbreaker,jdbcType=VARCHAR},
+      </if>
+      <if test="electricleakage != null" >
+        #{electricleakage,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.chuangkou.pdu.entity.SceneExample" resultType="java.lang.Integer" >
+    select count(*) from tb_scene
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tb_scene
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.scenename != null" >
+        sceneName = #{record.scenename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.detailed != null" >
+        detailed = #{record.detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="record.starttime != null" >
+        startTime = #{record.starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endtime != null" >
+        endTime = #{record.endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.repeatday != null" >
+        repeatDay = #{record.repeatday,jdbcType=VARCHAR},
+      </if>
+      <if test="record.voltage != null" >
+        voltage = #{record.voltage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.current != null" >
+        current = #{record.current,jdbcType=VARCHAR},
+      </if>
+      <if test="record.watt != null" >
+        watt = #{record.watt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.overvoltage != null" >
+        overvoltage = #{record.overvoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.undervoltage != null" >
+        undervoltage = #{record.undervoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.overcurrent != null" >
+        overcurrent = #{record.overcurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.circuitbreaker != null" >
+        circuitbreaker = #{record.circuitbreaker,jdbcType=VARCHAR},
+      </if>
+      <if test="record.electricleakage != null" >
+        electricleakage = #{record.electricleakage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null" >
+        state = #{record.state,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tb_scene
+    set ID = #{record.id,jdbcType=INTEGER},
+    sceneName = #{record.scenename,jdbcType=VARCHAR},
+    detailed = #{record.detailed,jdbcType=VARCHAR},
+    startTime = #{record.starttime,jdbcType=VARCHAR},
+    endTime = #{record.endtime,jdbcType=VARCHAR},
+    repeatDay = #{record.repeatday,jdbcType=VARCHAR},
+    voltage = #{record.voltage,jdbcType=VARCHAR},
+    current = #{record.current,jdbcType=VARCHAR},
+    watt = #{record.watt,jdbcType=VARCHAR},
+    overvoltage = #{record.overvoltage,jdbcType=VARCHAR},
+    undervoltage = #{record.undervoltage,jdbcType=VARCHAR},
+    overcurrent = #{record.overcurrent,jdbcType=VARCHAR},
+    circuitbreaker = #{record.circuitbreaker,jdbcType=VARCHAR},
+    electricleakage = #{record.electricleakage,jdbcType=VARCHAR},
+    state = #{record.state,jdbcType=VARCHAR},
+    remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.Scene" >
+    update tb_scene
+    <set >
+      <if test="scenename != null and scenename !=''" >
+        sceneName = #{scenename,jdbcType=VARCHAR},
+      </if>
+      <if test="detailed != null and detailed !=''" >
+        detailed = #{detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null and starttime !=''" >
+        startTime = #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null and endtime !=''" >
+        endTime = #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="repeatday != null and repeatday !=''" >
+        repeatDay = #{repeatday,jdbcType=VARCHAR},
+      </if>
+      <if test="voltage != null and voltage !=''" >
+        voltage = #{voltage,jdbcType=VARCHAR},
+      </if>
+      <if test="current != null and current !=''" >
+        current = #{current,jdbcType=VARCHAR},
+      </if>
+      <if test="watt != null and watt !=''" >
+        watt = #{watt,jdbcType=VARCHAR},
+      </if>
+      <if test="overvoltage != null and overvoltage !=''" >
+        overvoltage = #{overvoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="undervoltage != null and undervoltage !=''" >
+        undervoltage = #{undervoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="overcurrent != null and overcurrent !=''" >
+        overcurrent = #{overcurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="circuitbreaker != null and circuitbreaker !=''" >
+        circuitbreaker = #{circuitbreaker,jdbcType=VARCHAR},
+      </if>
+      <if test="electricleakage != null and electricleakage !=''" >
+        electricleakage = #{electricleakage,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null and state !=''" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null and remark !=''" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.Scene" >
+    update tb_scene
+    set sceneName = #{scenename,jdbcType=VARCHAR},
+      detailed = #{detailed,jdbcType=VARCHAR},
+      startTime = #{starttime,jdbcType=VARCHAR},
+      endTime = #{endtime,jdbcType=VARCHAR},
+      repeatDay = #{repeatday,jdbcType=VARCHAR},
+      voltage = #{voltage,jdbcType=VARCHAR},
+      current = #{current,jdbcType=VARCHAR},
+      watt = #{watt,jdbcType=VARCHAR},
+      overvoltage = #{overvoltage,jdbcType=VARCHAR},
+      undervoltage = #{undervoltage,jdbcType=VARCHAR},
+      overcurrent = #{overcurrent,jdbcType=VARCHAR},
+      circuitbreaker = #{circuitbreaker,jdbcType=VARCHAR},
+      electricleakage = #{electricleakage,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

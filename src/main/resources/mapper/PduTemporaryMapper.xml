@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduTemporaryMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduTemporary">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="machineid" jdbcType="VARCHAR" property="machineid" />
+    <result column="qrcode" jdbcType="VARCHAR" property="qrcode" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, machineid, qrcode, ip, type,state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_pdu_temporary
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!-- xulei add  2018-02-08 根据machineid返回设备信息 -->
+  <select id="selectByPduTemporary" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_pdu_temporary
+    where machineid = #{machineid,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_pdu_temporary
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduTemporary">
+    insert into tb_pdu_temporary (ID, machineid, qrcode, 
+      ip, type, state)
+    values (#{id,jdbcType=INTEGER}, #{machineid,jdbcType=VARCHAR}, #{qrcode,jdbcType=VARCHAR}, 
+      #{ip,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduTemporary">
+    insert into tb_pdu_temporary
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="machineid != null">
+        machineid,
+      </if>
+      <if test="qrcode != null">
+        qrcode,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="machineid != null">
+        #{machineid,jdbcType=VARCHAR},
+      </if>
+      <if test="qrcode != null">
+        #{qrcode,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+      #{type,jdbcType=VARCHAR},
+    </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.PduTemporary">
+    update tb_pdu_temporary
+    <set>
+      <if test="machineid != null">
+        machineid = #{machineid,jdbcType=VARCHAR},
+      </if>
+      <if test="qrcode != null">
+        qrcode = #{qrcode,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduTemporary">
+    update tb_pdu_temporary
+    set machineid = #{machineid,jdbcType=VARCHAR},
+      qrcode = #{qrcode,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <!--xulei add 2018-02-08 返回所有没有添加的新设备-->
+  <select id="selectByAll"  resultMap="BaseResultMap">
+
+<!--
+    select distinct a.ID,a.machineid, a.qrcode, a.ip, a.type, a.state
+    from  tb_pdu_temporary a
+    where a.machineid not in (select machineID from tb_pdu b)
+          and a.state &lt;&gt; "1"
+-->
+    select distinct a.ID,a.machineid, a.qrcode, a.ip, a.type, a.state
+    from  tb_pdu_temporary a
+    where a.state &lt;&gt; "1"
+  </select>
+
+  <!--xulei add 2018-02-24 修改临时记录状态为已删除-->
+  <update id="updateByPduTemporaryState" parameterType="java.lang.String" >
+  update tb_pdu_temporary
+  set state = "0"
+  where machineid = #{machineid,jdbcType=VARCHAR}
+</update>
+
+  <update id="updateStateAdd" parameterType="java.lang.String" >
+    update tb_pdu_temporary
+    set state = "1"
+    where machineid = #{machineid,jdbcType=VARCHAR}
+  </update>
+</mapper>

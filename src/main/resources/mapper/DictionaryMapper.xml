@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.DictionaryMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.Dictionary">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="text" jdbcType="VARCHAR" property="text" />
+    <result column="parentID" jdbcType="INTEGER" property="parentid" />
+    <result column="sorting" jdbcType="INTEGER" property="sorting" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, text, parentID, sorting
+  </sql>
+
+  <sql id="order_by_sorting">
+    ORDER BY sorting
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_dictionary
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_dictionary
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.Dictionary">
+    insert into tb_dictionary (ID, text, parentID,
+      sorting)
+    values (#{id,jdbcType=INTEGER}, #{text,jdbcType=VARCHAR}, #{parentid,jdbcType=INTEGER},
+      #{sorting,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.Dictionary">
+    insert into tb_dictionary
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="text != null">
+        text,
+      </if>
+      <if test="parentid != null">
+        parentID,
+      </if>
+      <if test="sorting != null">
+        sorting,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="text != null and text !=''">
+        #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null">
+        #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="sorting != null">
+        #{sorting,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.Dictionary">
+    update tb_dictionary
+    <set>
+      <if test="text != null and text != ''">
+        text = #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null">
+        parentID = #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="sorting != null">
+        sorting = #{sorting,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.Dictionary">
+    update tb_dictionary
+    set text = #{text,jdbcType=VARCHAR},
+      parentID = #{parentid,jdbcType=INTEGER},
+      sorting = #{sorting,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 根据parentid查询-->
+  <select id="selectByParentid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_dictionary
+    where parentID = #{parentid,jdbcType=INTEGER}
+    <include refid="order_by_sorting" />
+  </select>
+
+  <!-- 查询所有-->
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_dictionary
+   <include refid="order_by_sorting" />
+  </select>
+</mapper>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.RolePduRelationMapper">
+    <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.RolePduRelation">
+        <result column="roleID" jdbcType="INTEGER" property="roleid"/>
+        <result column="mpermissionsID" jdbcType="INTEGER" property="mpermissionsid"/>
+        <result column="ifview" jdbcType="VARCHAR" property="ifview"/>
+        <result column="ifcontrol" jdbcType="VARCHAR" property="ifcontrol"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <!--一对一配置-->
+
+
+        <!--<association property="pdugroup" javaType="com.chuangkou.pdu.entity.PduGroup">-->
+        <!--<id column="ID" jdbcType="INTEGER" property="id" />-->
+        <!--<result column="groupName" jdbcType="VARCHAR" property="groupname" />-->
+        <!--<result column="remark" jdbcType="VARCHAR" property="remark" />-->
+        <!--</association>-->
+
+
+        <!--<association property="pduGroupRelation" javaType="com.chuangkou.pdu.entity.PduGroupRelation">-->
+        <!--<id column="ID" jdbcType="INTEGER" property="id" />-->
+        <!--<result column="pduGroupID" jdbcType="INTEGER" property="pdugroupid" />-->
+        <!--<result column="pduID" jdbcType="INTEGER" property="pduid" />-->
+        <!--</association>-->
+        <!--&lt;!&ndash;多对一配置取出角色名 &ndash;&gt;-->
+
+        <!--<collection property="mpermissions" javaType="com.chuangkou.pdu.entity.Mpermissions">-->
+        <!--<id column="id" jdbcType="INTEGER" property="id" />-->
+        <!--<result column="role_name" jdbcType="VARCHAR" property="roleName" />-->
+        <!--<result column="permission" jdbcType="VARCHAR" property="permission" />-->
+        <!--</collection>-->
+        <!--&lt;!&ndash;多对一配置取出设备信息 &ndash;&gt;-->
+        <!--<collection property="pdus" ofType="com.chuangkou.pdu.entity.Pdu">-->
+        <!--<id column="ID" jdbcType="INTEGER" property="id"/>-->
+        <!--<result column="machineID" jdbcType="VARCHAR" property="machineid"/>-->
+        <!--<result column="QRcode" jdbcType="VARCHAR" property="qrcode"/>-->
+        <!--<result column="parentID" jdbcType="VARCHAR" property="parentid"/>-->
+        <!--<result column="type" jdbcType="VARCHAR" property="type"/>-->
+        <!--<result column="name" jdbcType="VARCHAR" property="name"/>-->
+        <!--<result column="ip" jdbcType="VARCHAR" property="ip"/>-->
+        <!--<result column="onlinestate" jdbcType="VARCHAR" property="onlinestate"/>-->
+        <!--<result column="state" jdbcType="VARCHAR" property="state"/>-->
+        <!--<result column="createTime" jdbcType="VARCHAR" property="createTime"/>-->
+        <!--<result column="updateTime" jdbcType="VARCHAR" property="updateTime"/>-->
+        <!--<result column="remark" jdbcType="VARCHAR" property="remark"/>-->
+        <!--</collection>-->
+    </resultMap>
+
+
+    <resultMap id="BaseResultMap2" type="com.chuangkou.pdu.entity.PduPermissions">
+        <result column="roleID" jdbcType="INTEGER" property="roleId"/>
+        <result column="mpermissionsID" jdbcType="INTEGER" property="mpermissionsId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="machineID" jdbcType="VARCHAR" property="machineid"/>
+        <result column="ifview" jdbcType="VARCHAR" property="ifview"/>
+        <result column="ifcontrol" jdbcType="VARCHAR" property="ifcontrol"/>
+        <result column="groupName" jdbcType="VARCHAR" property="groupname"/>
+    </resultMap>
+
+    <select id="selectall" parameterType="INTEGER" resultMap="BaseResultMap2">
+   select rp.role_name,p.id,p.name,p.ip,p.machineid,rpr.ifview,rpr.ifcontrol,pg.groupName,rpr.mpermissionsID,rpr.roleID
+from tb_role_pdu_relation rpr
+LEFT JOIN tb_pdu p on p.ID=rpr.mpermissionsID
+left join roles_permissions rp on rp.id=rpr.roleID
+left join tb_pdu_group_relation pgr on pgr.pduID=p.id
+LEFT JOIN tb_pdu_group pg on pg.ID=pgr.pduGroupID
+WHERE rp.id= #{id,jdbcType=INTEGER}
+order  by  rp.role_name  asc
+  </select>
+    <update id="update" parameterType="com.chuangkou.pdu.entity.RolePduRelation">
+        update tb_role_pdu_relation
+        <set>
+            <if test="ifview != null">
+                ifview = #{ifview,jdbcType=VARCHAR},
+            </if>
+            <if test="ifcontrol != null">
+                ifcontrol = #{ifcontrol,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where roleID = #{roleid,jdbcType=INTEGER} AND mpermissionsID=#{ mpermissionsid,jdbcType=INTEGER}
+    </update>
+
+
+    <insert id="insert" parameterType="com.chuangkou.pdu.entity.RolePduRelation">
+    insert into tb_role_pdu_relation (roleID, mpermissionsID, ifview, 
+      ifcontrol)
+    values (#{roleid,jdbcType=INTEGER}, #{mpermissionsid,jdbcType=INTEGER}, #{ifview,jdbcType=VARCHAR}, 
+      #{ifcontrol,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.RolePduRelation">
+        insert into tb_role_pdu_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleid != null">
+                roleID,
+            </if>
+            <if test="mpermissionsid != null">
+                mpermissionsID,
+            </if>
+            <if test="ifview != null">
+                ifview,
+            </if>
+            <if test="ifcontrol != null">
+                ifcontrol,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleid != null">
+                #{roleid,jdbcType=INTEGER},
+            </if>
+            <if test="mpermissionsid != null">
+                #{mpermissionsid,jdbcType=INTEGER},
+            </if>
+            <if test="ifview != null">
+                #{ifview,jdbcType=VARCHAR},
+            </if>
+            <if test="ifcontrol != null">
+                #{ifcontrol,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getRolePduRelationList" parameterType="String" resultMap="BaseResultMap">
+
+    select DISTINCT rpr.mpermissionsID as mpermissionsID,rpr.ifview as ifview,
+    rpr.ifcontrol as ifcontrol,p.type as type
+    from users u
+    LEFT JOIN user_roles ur on u.username = ur.userName
+    LEFT JOIN roles_permissions rp on ur.role_name = rp.role_name
+    LEFT JOIN tb_role_pdu_relation rpr on rpr.roleID = rp.id
+    LEFT JOIN tb_pdu p on p.ID = rpr.mpermissionsID
+    where u.username = #{0}
+
+  </select>
+
+
+</mapper>

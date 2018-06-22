@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduRelationMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduRelation">
+
+    <result column="pduID" jdbcType="INTEGER" property="pduID" />
+    <result column="switchPduID" jdbcType="INTEGER" property="switchPduID" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parent_id" />
+<!--
+    <result column="device_id" jdbcType="VARCHAR" property="device_id" />
+    <result column="device_name" jdbcType="VARCHAR" property="device_name" />
+    <result column="device_state" jdbcType="INTEGER" property="device_state" />
+    <result column="group_id" jdbcType="VARCHAR" property="group_id" />
+    <result column="group_name" jdbcType="VARCHAR" property="group_name" />
+    <result column="power" jdbcType="VARCHAR" property="power" />
+    <result column="electricity" jdbcType="VARCHAR" property="electricity" />
+    <result column="voltage" jdbcType="VARCHAR" property="voltage" />
+    <result column="pdutype" jdbcType="INTEGER" property="pdutype" />
+-->
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    pduID,switchPduID,parent_id
+    <!--device_id,device_name,device_state,device_state,group_id,group_name,
+    power,electricity,voltage,pdutype-->
+  </sql>
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_pdu_relation
+    where pduID = #{pduID,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduRelation">
+    insert into tb_pdu_relation (pduID,switchPduID,parent_id
+      )
+    values (#{pduID,jdbcType=INTEGER}, #{switchPduID,jdbcType=INTEGER},#{parent_id,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduRelation">
+    insert into tb_pdu_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pduID != null">
+        pduID,
+      </if>
+      <if test="switchPduID != null">
+        switchPduID,
+      </if>
+      <if test="parent_id != null">
+        parent_id,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pduID != null">
+        pduID,
+      </if>
+      <if test="switchPduID != null">
+        switchPduID,
+      </if>
+
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduRelation">
+
+    update tb_pdu_relation
+    set pduID = #{pduID,jdbcType=INTEGER},
+      switchPduID = #{switchPduID,jdbcType=INTEGER},
+      parent_id = #{parent_id,jdbcType=VARCHAR}
+    where pduID = #{pduID,jdbcType=INTEGER}
+
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.PduRelation">
+    update tb_pdu_relation
+    <set>
+      <if test="pduID != null">
+        pduID = #{pduID,jdbcType=INTEGER},
+      </if>
+      <if test="switchPduID != null">
+        switchPduID = #{switchPduID,jdbcType=INTEGER},
+      </if>
+      <if test="parent_id != null">
+        parent_id = #{parent_id,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where pduID = #{pduID,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByPlugs" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_pdu_relation
+    where switchPduID = #{switchPduID,jdbcType=INTEGER} and  parent_id = ""
+  </select>
+
+  <select id="selectByPlugsNotEmpty" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_pdu_relation
+    where switchPduID = #{switchPduID,jdbcType=INTEGER} and parent_id &lt;&gt; ""
+  </select>
+
+  <select id="selectBySubChildrens" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_pdu_relation
+    where parent_id = #{parent_id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByPduInfo" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_pdu_relation-->
+    <!--where pduID = #{pduID,jdbcType=INTEGER}-->
+  </select>
+</mapper>
