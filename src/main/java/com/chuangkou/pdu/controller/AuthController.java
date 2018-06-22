@@ -26,6 +26,7 @@ public class AuthController{
     @RequestMapping("/doLogin")
     public String doLogin(HttpServletRequest request, String username, String password) throws MyException {
         userService.login(request, username, password);
+        System.out.print(request.getSession().getServletContext().getRealPath(""));
         return "/index";
     }
 }

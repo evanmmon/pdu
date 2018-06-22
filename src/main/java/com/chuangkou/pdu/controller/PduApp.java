@@ -748,7 +748,7 @@ public class PduApp extends BaseController {
         JSONObject json = null;
         PrintWriter out = response.getWriter();
         String access_token = request.getHeader("access_token");
-        //access_token = "test001,E10ADC3949BA59ABBE56E057F20F883E,1527748347597";
+        access_token = "test001,E10ADC3949BA59ABBE56E057F20F883E,1527748347597";
         //验证并解析token
         Token token = TokenUtil.apptokenyanzheng(access_token);
 
