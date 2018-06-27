@@ -46,6 +46,8 @@ public class PduInfo {
 
     private String quantity; //电量
 
+    private String resistance;//电阻
+
     public Integer getId() {
         return id;
     }
@@ -204,5 +206,13 @@ public class PduInfo {
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
+    }
+
+    public String getResistance() {
+        return resistance;
+    }
+
+    public void setResistance(String resistance) {
+        this.resistance = resistance;
     }
 }

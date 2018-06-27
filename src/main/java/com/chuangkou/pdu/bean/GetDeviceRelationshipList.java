@@ -58,8 +58,8 @@ public class GetDeviceRelationshipList {
         private String electronictages6;
         private int pdutype;
         private String parent_id;//父节点id
-        private List<ChildrensBean> childrens;
-
+//        private List<ChildrensBean> childrens;
+        private List<PduRelation> childrens;
         public String getDevice_id() {
             return device_id;
         }
@@ -188,13 +188,21 @@ public class GetDeviceRelationshipList {
             this.parent_id = parent_id;
         }
 
-        public List<ChildrensBean> getChildrens() {
+        public List<PduRelation> getChildrens() {
             return childrens;
         }
 
-        public void setChildrens(List<ChildrensBean> childrens) {
+        public void setChildrens(List<PduRelation> childrens) {
             this.childrens = childrens;
         }
+
+//        public List<ChildrensBean> getChildrens() {
+//            return childrens;
+//        }
+//
+//        public void setChildrens(List<ChildrensBean> childrens) {
+//            this.childrens = childrens;
+//        }
 
         public static class ChildrensBean {
             /**

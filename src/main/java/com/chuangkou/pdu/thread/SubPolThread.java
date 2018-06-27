@@ -7,7 +7,6 @@ import com.chuangkou.pdu.service.*;
 import com.chuangkou.pdu.util.DeviceEvent;
 import com.chuangkou.pdu.util.MessageStringDLTUtils;
 import com.chuangkou.pdu.util.StringUtil;
-import com.sun.xml.internal.rngom.parse.host.Base;
 import net.sf.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -80,38 +79,38 @@ public class SubPolThread implements Runnable {
                 //                Thread.sleep(1000);
                 String msg = "";
                 msg = ThreadUtils.readMessageFromClient(connection.getInputStream());
-                //                System.out.println("收到报文==" + msg);
+                //                System.out.println("鏀跺埌鎶ユ枃==" + msg);
                 //                setReadMsg(msg);
 
                 Message message = new Message();
                 MessageDLT messageDLT = new MessageDLT();
 
-                String dataTab = "06EE0100";//预警报文
+                String dataTab = "06EE0100";//棰勮鎶ユ枃
                 dataTab = MessageStringDLTUtils.dateIDhex(dataTab);
 
                 if (!msg.equals("")) {
 
                     messageDLT = MessageStringDLTUtils.onlineMessage(msg);
                     String macheineID = messageDLT.getMachineAddress();
-                    macheineID = MessageStringDLTUtils.machineAddressHexOpposite(macheineID);//正序
+                    macheineID = MessageStringDLTUtils.machineAddressHexOpposite(macheineID);//姝ｅ簭
 
                     if (msg.substring(0, 8).equals("FEFEFEFE")) {
                         BaseController.readmsg = msg;
-                        System.out.println("收到回复的报文==" + BaseController.readmsg);
+                        System.out.println("鏀跺埌鍥炲鐨勬姤鏂�==" + BaseController.readmsg);
                         //                        Thread.sleep(1000);
                         break;
                     }
 
-                    //判断是心跳包
-                    if (messageDLT.getDataTab().equals("3C3C3239") && messageDLT.getDataStr().equals("55555555")) {//设备上电发送报文，核对IP地址和设备ID
-                        System.out.println("这是心跳包！");
+                    //鍒ゆ柇鏄績璺冲寘
+                    if (messageDLT.getDataTab().equals("3C3C3239") && messageDLT.getDataStr().equals("55555555")) {//璁惧涓婄數鍙戦�佹姤鏂囷紝鏍稿IP鍦板潃鍜岃澶嘔D
+                        System.out.println("杩欐槸蹇冭烦鍖咃紒");
 
                         messageDLT.setControl("2E");
                         messageDLT.setMachineAddress(macheineID);
 
                         String heartmsg = getHeartMessage(macheineID);
 
-                        System.out.println("发送心跳==" + heartmsg);
+                        System.out.println("鍙戦�佸績璺�==" + heartmsg);
 
                         ThreadUtils.writeMsgToClient(connection.getOutputStream(), heartmsg);
 
@@ -122,7 +121,7 @@ public class SubPolThread implements Runnable {
                         //                        String machineID = messageDLT.getMachineAddress();
                         //                        machineID = MessageStringDLTUtils.machineAddressHex(machineID);
 
-                        //设备上电对校时
+                        //璁惧涓婄數瀵规牎鏃�
                         Thread.sleep(2000);
                         Thread threadTime = new Thread(new JobPduDateTimeSetThread(connection, messageDLT.getMachineAddress()));
                         threadTime.start();
@@ -135,17 +134,17 @@ public class SubPolThread implements Runnable {
 
                         if (searchPdu != null) {
 
-                            //判断IP地址不同 状态为离线的 修改设备信息
+                            //鍒ゆ柇IP鍦板潃涓嶅悓 鐘舵�佷负绂荤嚎鐨� 淇敼璁惧淇℃伅
                             if (!searchPdu.getIp().equals(ip) || searchPdu.getOnlinestate().equals("2")) {
 
-                                System.out.println("设备存在，但是IP地址有变化");
+                                System.out.println("璁惧瀛樺湪锛屼絾鏄疘P鍦板潃鏈夊彉鍖�");
                                 String updateAction = ThreadUtils.updatePduIpDLT(messageDLT, ip, this.connection);
                                 Pdu pduaddress = pduService.selectByMachineID(macheineID);
 
 
-                                //设备设备上线 推送消息提醒
-                                System.out.println("设备上线推送消息====");
-                                int event_type = DeviceEvent.TYPE_ONLINE;//下线事件类型
+                                //璁惧璁惧涓婄嚎 鎺ㄩ�佹秷鎭彁閱�
+                                System.out.println("璁惧涓婄嚎鎺ㄩ�佹秷鎭�====");
+                                int event_type = DeviceEvent.TYPE_ONLINE;//涓嬬嚎浜嬩欢绫诲瀷
                                 String appMessage = ThreadUtils.sendDeviceEvent(pduaddress.getId(), event_type);
                                 ThreadUtils.connectionMapMessageSend(BaseController.APPSubPolmap, appMessage);
 
@@ -157,21 +156,21 @@ public class SubPolThread implements Runnable {
 
                         if (searchPdu == null) {
 
-                            //新设备
+                            //鏂拌澶�
                             String updateAction = ThreadUtils.updatePduIpDLT(messageDLT, ip, this.connection);
                             //                            BaseController.SubPolmap.put(addressip, connection);
 
                             Pdu pduaddress = pduService.selectByMachineID(macheineID);
 
-                            //设备上电对校时
-                            //                            System.out.println("设备上电对校时====");
+                            //璁惧涓婄數瀵规牎鏃�
+                            //                            System.out.println("璁惧涓婄數瀵规牎鏃�====");
                             threadTime = new Thread(new JobPduDateTimeSetThread(connection, pduaddress.getMachineid()));
                             threadTime.start();
                             threadTime.join();
 
-                            //设备设备上线 推送消息提醒
-                            System.out.println("设备上线推送消息====");
-                            int event_type = DeviceEvent.TYPE_ONLINE;//下线事件类型
+                            //璁惧璁惧涓婄嚎 鎺ㄩ�佹秷鎭彁閱�
+                            System.out.println("璁惧涓婄嚎鎺ㄩ�佹秷鎭�====");
+                            int event_type = DeviceEvent.TYPE_ONLINE;//涓嬬嚎浜嬩欢绫诲瀷
                             String appMessage = ThreadUtils.sendDeviceEvent(pduaddress.getId(), event_type);
                             ThreadUtils.connectionMapMessageSend(BaseController.APPSubPolmap, appMessage);
 
@@ -181,10 +180,10 @@ public class SubPolThread implements Runnable {
                     }
 
 
-                    //判断是预警信息
+                    //鍒ゆ柇鏄璀︿俊鎭�
                     if (messageDLT.getDataTab().equals(dataTab)) {
                         PduWarning pduWarning = new PduWarning();
-                        System.out.println("收到预警信息！编号：" + macheineID);
+                        System.out.println("鏀跺埌棰勮淇℃伅锛佺紪鍙凤細" + macheineID);
                         Pdu warningPdu = pduService.selectByMachineID(macheineID);
 
                         if (warningPdu != null) {
@@ -200,50 +199,50 @@ public class SubPolThread implements Runnable {
                             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             String datetime = df.format(System.currentTimeMillis());
                             pduWarning.setWarningtime(datetime);
-                            pduWarningService.insert(pduWarning);//插入上报的预警信息
+                            pduWarningService.insert(pduWarning);//鎻掑叆涓婃姤鐨勯璀︿俊鎭�
 
                             Pdu updatePdu = new Pdu();
                             System.out.println("warningPdu.getId()===" + warningPdu.getId());
                             updatePdu.setId(warningPdu.getId());
                             updatePdu.setOnlinestate("3");
-                            pduService.update(updatePdu);//修改设备状态为 发生故障
+                            pduService.update(updatePdu);//淇敼璁惧鐘舵�佷负 鍙戠敓鏁呴殰
 
-                            //设备故障 推送消息提醒 至APP
+                            //璁惧鏁呴殰 鎺ㄩ�佹秷鎭彁閱� 鑷矨PP
                             int event_type = 100;
                             switch (Integer.valueOf(warningType)) {
                                 case 0:
-                                    event_type = DeviceEvent.TYPE_ELECTRIC_LEAKAGE;//漏电事件类型
+                                    event_type = DeviceEvent.TYPE_ELECTRIC_LEAKAGE;//婕忕數浜嬩欢绫诲瀷
                                     break;
                                 case 1:
-                                    event_type = DeviceEvent.TYPE_OPEN_CIRCUIT;//断路事件类型
+                                    event_type = DeviceEvent.TYPE_OPEN_CIRCUIT;//鏂矾浜嬩欢绫诲瀷
                                     break;
                                 case 2:
-                                    event_type = DeviceEvent.TYPE_POWER_ABNORMAL;//功率事件类型
+                                    event_type = DeviceEvent.TYPE_POWER_ABNORMAL;//鍔熺巼浜嬩欢绫诲瀷
                                     break;
                                 case 3:
-                                    event_type = DeviceEvent.TYPE_OVER_VOLTAGE;//过压事件类型
+                                    event_type = DeviceEvent.TYPE_OVER_VOLTAGE;//杩囧帇浜嬩欢绫诲瀷
                                     break;
                                 case 4:
-                                    event_type = DeviceEvent.TYPE_UNDER_VOLTAGE;//欠压事件类型
+                                    event_type = DeviceEvent.TYPE_UNDER_VOLTAGE;//娆犲帇浜嬩欢绫诲瀷
                                     break;
                                 case 5:
-                                    event_type = DeviceEvent.TYPE_OVER_CURRENT;//过流事件类型
+                                    event_type = DeviceEvent.TYPE_OVER_CURRENT;//杩囨祦浜嬩欢绫诲瀷
                                     break;
                                 case 6:
-                                    event_type = DeviceEvent.TYPE_SMOKE_OPEN;//烟雾事件类型
+                                    event_type = DeviceEvent.TYPE_SMOKE_OPEN;//鐑熼浘浜嬩欢绫诲瀷
                                     break;
                                 case 7:
-                                    event_type = DeviceEvent.TYPE_TEMPERATURE_OPEN;//温度事件类型
+                                    event_type = DeviceEvent.TYPE_TEMPERATURE_OPEN;//娓╁害浜嬩欢绫诲瀷
                                     break;
                                 case 8:
-                                    event_type = DeviceEvent.TYPE_WATERLEVEL_OPEN;//液位事件类型
+                                    event_type = DeviceEvent.TYPE_WATERLEVEL_OPEN;//娑蹭綅浜嬩欢绫诲瀷
                                     break;
                             }
 
                             String appMessage = ThreadUtils.sendDeviceEvent(warningPdu.getId(), event_type);
                             ThreadUtils.connectionMapMessageSend(BaseController.APPSubPolmap, appMessage);
                         } else {
-                            System.out.println("设备：" + macheineID + "不存在");
+                            System.out.println("璁惧锛�" + macheineID + "涓嶅瓨鍦�");
                         }
                         //                        BaseController.SubPolmap.put(addressip, connection);
                     }
@@ -273,7 +272,7 @@ public class SubPolThread implements Runnable {
  try {
  //            while (run) {
  Thread.sleep(4000);
- //读取客户端传过来的数据报文
+ //璇诲彇瀹㈡埛绔紶杩囨潵鐨勬暟鎹姤鏂�
  String msg = "";
  Message message = new Message();
  MessageDLT messageDLT = new MessageDLT();
@@ -286,19 +285,19 @@ public class SubPolThread implements Runnable {
  System.out.println(connection.getInetAddress().toString() + "===" + msg);
 
 
- //                System.out.println("收到报文==" + msg);
- String dataTab = "06EE0100";//预警报文
+ //                System.out.println("鏀跺埌鎶ユ枃==" + msg);
+ String dataTab = "06EE0100";//棰勮鎶ユ枃
  dataTab = MessageStringDLTUtils.dateIDhex(dataTab);
 
  if (!msg.equals("")) {
 
  messageDLT = MessageStringDLTUtils.onlineMessage(msg);
  String macheineID = messageDLT.getMachineAddress();
- macheineID = MessageStringDLTUtils.machineAddressHexOpposite(macheineID);//正序
+ macheineID = MessageStringDLTUtils.machineAddressHexOpposite(macheineID);//姝ｅ簭
 
- //判断是心跳包
- if (messageDLT.getDataTab().equals("3C3C3239") && messageDLT.getDataStr().equals("55555555")) {//设备上电发送报文，核对IP地址和设备ID
- System.out.println("这是心跳包！");
+ //鍒ゆ柇鏄績璺冲寘
+ if (messageDLT.getDataTab().equals("3C3C3239") && messageDLT.getDataStr().equals("55555555")) {//璁惧涓婄數鍙戦�佹姤鏂囷紝鏍稿IP鍦板潃鍜岃澶嘔D
+ System.out.println("杩欐槸蹇冭烦鍖咃紒");
 
  messageDLT.setControl("2E");
  messageDLT.setMachineAddress(macheineID);
@@ -309,14 +308,14 @@ public class SubPolThread implements Runnable {
  //                        String sum = MessageStringDLTUtils.makeChecksum(heartmsg.substring(0, heartmsg.length() - 4));
  //                        heartmsg = heartmsg.substring(0, heartmsg.length() - 4) + sum + "160D0A";
 
- System.out.println("发送心跳==" + heartmsg);
+ System.out.println("鍙戦�佸績璺�==" + heartmsg);
 
  ThreadUtils.writeMsgToClient(connection.getOutputStream(), heartmsg);
 
  String readheart = ThreadUtils.readMessageFromClient(connection.getInputStream());
 
  //                        while (readheart.equals("")) {
- //                            System.out.println("重发心跳===" + heartmsg);
+ //                            System.out.println("閲嶅彂蹇冭烦===" + heartmsg);
  //                            ThreadUtils.writeMsgToClient(connection.getOutputStream(), heartmsg);
  //
  //                            readheart = ThreadUtils.readMessageFromClient(connection.getInputStream());
@@ -327,7 +326,7 @@ public class SubPolThread implements Runnable {
  //                            messageDLT = MessageStringDLTUtils.onlineMessage(readheart);
  //                            String newddress = MessageStringDLTUtils.machineAddressHexOpposite(messageDLT.getMachineAddress());
  //                            if (messageDLT.getControl().equals("91") && macheineID.equals(newddress)) {
- //                                System.out.println("收到心跳！");
+ //                                System.out.println("鏀跺埌蹇冭烦锛�");
  //                            }
 
 
@@ -338,8 +337,8 @@ public class SubPolThread implements Runnable {
  String machineID = messageDLT.getMachineAddress();
  machineID = MessageStringDLTUtils.machineAddressHex(machineID);
 
- //设备上电对校时
- //                                System.out.println("设备上电对校时====");
+ //璁惧涓婄數瀵规牎鏃�
+ //                                System.out.println("璁惧涓婄數瀵规牎鏃�====");
  Thread threadTime = new Thread(new JobPduDateTimeSetThread(connection, machineID));
  threadTime.start();
  threadTime.join();
@@ -351,10 +350,10 @@ public class SubPolThread implements Runnable {
 
  if (searchPdu != null) {
 
- //判断IP地址不同 状态为离线的 修改设备信息
+ //鍒ゆ柇IP鍦板潃涓嶅悓 鐘舵�佷负绂荤嚎鐨� 淇敼璁惧淇℃伅
  if (!searchPdu.getIp().equals(ip) || searchPdu.getOnlinestate().equals("2")) {
 
- System.out.println("设备存在，但是IP地址有变化");
+ System.out.println("璁惧瀛樺湪锛屼絾鏄疘P鍦板潃鏈夊彉鍖�");
  String updateAction = ThreadUtils.updatePduIpDLT(messageDLT, ip, this.connection);
  //                                BaseController.SubPolmap.put(addressip, connection);
 
@@ -362,9 +361,9 @@ public class SubPolThread implements Runnable {
 
 
 
- //设备设备上线 推送消息提醒
- System.out.println("设备上线推送消息====");
- int event_type = DeviceEvent.TYPE_ONLINE;//下线事件类型
+ //璁惧璁惧涓婄嚎 鎺ㄩ�佹秷鎭彁閱�
+ System.out.println("璁惧涓婄嚎鎺ㄩ�佹秷鎭�====");
+ int event_type = DeviceEvent.TYPE_ONLINE;//涓嬬嚎浜嬩欢绫诲瀷
  String appMessage = ThreadUtils.sendDeviceEvent(pduaddress.getId(), event_type);
  ThreadUtils.connectionMapMessageSend(BaseController.APPSubPolmap, appMessage);
 
@@ -376,21 +375,21 @@ public class SubPolThread implements Runnable {
 
  if (searchPdu == null) {
 
- //新设备
+ //鏂拌澶�
  String updateAction = ThreadUtils.updatePduIpDLT(messageDLT, ip, this.connection);
  //                            BaseController.SubPolmap.put(addressip, connection);
 
  Pdu pduaddress = pduService.selectByMachineID(macheineID);
 
- //设备上电对校时
- //                            System.out.println("设备上电对校时====");
+ //璁惧涓婄數瀵规牎鏃�
+ //                            System.out.println("璁惧涓婄數瀵规牎鏃�====");
  threadTime = new Thread(new JobPduDateTimeSetThread(connection, pduaddress.getMachineid()));
  threadTime.start();
  threadTime.join();
 
- //设备设备上线 推送消息提醒
- System.out.println("设备上线推送消息====");
- int event_type = DeviceEvent.TYPE_ONLINE;//下线事件类型
+ //璁惧璁惧涓婄嚎 鎺ㄩ�佹秷鎭彁閱�
+ System.out.println("璁惧涓婄嚎鎺ㄩ�佹秷鎭�====");
+ int event_type = DeviceEvent.TYPE_ONLINE;//涓嬬嚎浜嬩欢绫诲瀷
  String appMessage = ThreadUtils.sendDeviceEvent(pduaddress.getId(), event_type);
  ThreadUtils.connectionMapMessageSend(BaseController.APPSubPolmap, appMessage);
 
@@ -400,7 +399,7 @@ public class SubPolThread implements Runnable {
  }
 
 
- //判断是预警信息
+ //鍒ゆ柇鏄璀︿俊鎭�
  if (messageDLT.getDataTab().equals(dataTab)) {
  PduWarning pduWarning = new PduWarning();
 
@@ -418,42 +417,42 @@ public class SubPolThread implements Runnable {
  SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
  String datetime = df.format(System.currentTimeMillis());
  pduWarning.setWarningtime(datetime);
- pduWarningService.insert(pduWarning);//插入上报的预警信息
+ pduWarningService.insert(pduWarning);//鎻掑叆涓婃姤鐨勯璀︿俊鎭�
 
  Pdu updatePdu = new Pdu();
  updatePdu.setId(warningPdu.getId());
  updatePdu.setOnlinestate("3");
- pduService.update(updatePdu);//修改设备状态为 发生故障
+ pduService.update(updatePdu);//淇敼璁惧鐘舵�佷负 鍙戠敓鏁呴殰
 
- //设备故障 推送消息提醒 至APP
+ //璁惧鏁呴殰 鎺ㄩ�佹秷鎭彁閱� 鑷矨PP
  int event_type = 100;
  switch (Integer.valueOf(warningType)) {
  case 0:
- event_type = DeviceEvent.TYPE_ELECTRIC_LEAKAGE;//漏电事件类型
+ event_type = DeviceEvent.TYPE_ELECTRIC_LEAKAGE;//婕忕數浜嬩欢绫诲瀷
  break;
  case 1:
- event_type = DeviceEvent.TYPE_OPEN_CIRCUIT;//断路事件类型
+ event_type = DeviceEvent.TYPE_OPEN_CIRCUIT;//鏂矾浜嬩欢绫诲瀷
  break;
  case 2:
- event_type = DeviceEvent.TYPE_POWER_ABNORMAL;//功率事件类型
+ event_type = DeviceEvent.TYPE_POWER_ABNORMAL;//鍔熺巼浜嬩欢绫诲瀷
  break;
  case 3:
- event_type = DeviceEvent.TYPE_OVER_VOLTAGE;//过压事件类型
+ event_type = DeviceEvent.TYPE_OVER_VOLTAGE;//杩囧帇浜嬩欢绫诲瀷
  break;
  case 4:
- event_type = DeviceEvent.TYPE_UNDER_VOLTAGE;//欠压事件类型
+ event_type = DeviceEvent.TYPE_UNDER_VOLTAGE;//娆犲帇浜嬩欢绫诲瀷
  break;
  case 5:
- event_type = DeviceEvent.TYPE_OVER_CURRENT;//过流事件类型
+ event_type = DeviceEvent.TYPE_OVER_CURRENT;//杩囨祦浜嬩欢绫诲瀷
  break;
  case 6:
- event_type = DeviceEvent.TYPE_SMOKE_OPEN;//烟雾事件类型
+ event_type = DeviceEvent.TYPE_SMOKE_OPEN;//鐑熼浘浜嬩欢绫诲瀷
  break;
  case 7:
- event_type = DeviceEvent.TYPE_TEMPERATURE_OPEN;//温度事件类型
+ event_type = DeviceEvent.TYPE_TEMPERATURE_OPEN;//娓╁害浜嬩欢绫诲瀷
  break;
  case 8:
- event_type = DeviceEvent.TYPE_WATERLEVEL_OPEN;//液位事件类型
+ event_type = DeviceEvent.TYPE_WATERLEVEL_OPEN;//娑蹭綅浜嬩欢绫诲瀷
  break;
  }
 
@@ -463,14 +462,14 @@ public class SubPolThread implements Runnable {
  //                        BaseController.SubPolmap.put(addressip, connection);
  }
 
- //判断是设备手动拉闸、合闸
+ //鍒ゆ柇鏄澶囨墜鍔ㄦ媺闂搞�佸悎闂�
  if (messageDLT.getControl().equals("1C") && messageDLT.getDataTab().equals("35434343")) {
 
  String datastr = messageDLT.getDataStr();
- //判断拉闸
+ //鍒ゆ柇鎷夐椄
  if (datastr.indexOf("4D") != -1) {
- //收到手动拉闸的消息，修改设备的继电器状态
- System.out.println("收到手动拉闸的消息,改设备的继电器状态");
+ //鏀跺埌鎵嬪姩鎷夐椄鐨勬秷鎭紝淇敼璁惧鐨勭户鐢靛櫒鐘舵��
+ System.out.println("鏀跺埌鎵嬪姩鎷夐椄鐨勬秷鎭�,鏀硅澶囩殑缁х數鍣ㄧ姸鎬�");
  Pdu actionPdu = new Pdu();
  actionPdu = pduService.selectByMachineID(macheineID);
  actionPdu.setActionState("0");
@@ -479,9 +478,9 @@ public class SubPolThread implements Runnable {
  pduService.update(actionPdu);
  }
 
- //判断合闸
+ //鍒ゆ柇鍚堥椄
  if (datastr.indexOf("4E") != -1) {
- System.out.println("收到手动合闸的消息，修改设备的继电器状态");
+ System.out.println("鏀跺埌鎵嬪姩鍚堥椄鐨勬秷鎭紝淇敼璁惧鐨勭户鐢靛櫒鐘舵��");
  Pdu actionPdu = new Pdu();
  actionPdu = pduService.selectByMachineID(macheineID);
  actionPdu.setActionState("1");
@@ -502,13 +501,13 @@ public class SubPolThread implements Runnable {
  Pdu pduaddressResult = new Pdu();
  pduaddressResult = list.get(0);
 
- if (pduaddressResult.getType().equals("180") && msg.equals("") && pduaddressResult.getMachineid().length() == 10) {//判断是空开设备
+ if (pduaddressResult.getType().equals("180") && msg.equals("") && pduaddressResult.getMachineid().length() == 10) {//鍒ゆ柇鏄┖寮�璁惧
 
  //                            BaseController.SubPolmap.put(addressip, connection);
- //集中器应该给多个设备 进行校正
+ //闆嗕腑鍣ㄥ簲璇ョ粰澶氫釜璁惧 杩涜鏍℃
  for (int i = 0; i < list.size(); i++) {
  pduaddressResult = list.get(i);
- //                                System.out.println("空开校时====");
+ //                                System.out.println("绌哄紑鏍℃椂====");
  Thread threadTime = new Thread(new JobPduDateTimeSetThread(connection, pduaddressResult.getMachineid()));
  threadTime.start();
  threadTime.join();
@@ -530,9 +529,9 @@ public class SubPolThread implements Runnable {
  //                connection.close();
  } catch(Exception e){
  //                BaseController.SubPolmap.remove(addressip);
- //                System.out.println(connection.getInetAddress() + "连接异常，已断开连接！");
- //                连接异常 推送消息提醒
- //                int event_type = DeviceEvent.TYPE_OFFLINE;//下线事件类型
+ //                System.out.println(connection.getInetAddress() + "杩炴帴寮傚父锛屽凡鏂紑杩炴帴锛�");
+ //                杩炴帴寮傚父 鎺ㄩ�佹秷鎭彁閱�
+ //                int event_type = DeviceEvent.TYPE_OFFLINE;//涓嬬嚎浜嬩欢绫诲瀷
  //                String appMessage = ThreadUtils.sendDeviceEvent(pduid, event_type);
  //                ThreadUtils.connectionMapMessageSend(BaseController.APPSubPolmap, appMessage);
 
@@ -547,7 +546,7 @@ public class SubPolThread implements Runnable {
 
 
         /**
-         * 读取客户端信息
+         * 璇诲彇瀹㈡埛绔俊鎭�
          *
          * @param inputStream
          */
@@ -558,21 +557,21 @@ public class SubPolThread implements Runnable {
 //        String a = null;
 //        String message = "";
 //
-//        //循环接收报文
+//        //寰幆鎺ユ敹鎶ユ枃
 //        while ((a = br.readLine()) != null) {
 //            message += a;
 //            System.out.println(message);
 //            return message;
 //        }
-//        System.out.println("已接收到客户端连接");
-//        BufferedReader bufferedReader = new BufferedReader(reader);//加入缓冲区
+//        System.out.println("宸叉帴鏀跺埌瀹㈡埛绔繛鎺�");
+//        BufferedReader bufferedReader = new BufferedReader(reader);//鍔犲叆缂撳啿鍖�
 //        String temp = null;
 //        String info = "";
 
 //        while ((temp = bufferedReader.readLine()) != null) {
 //            info += temp;
-//            System.out.println("已接收到客户端连接");
-//            System.out.println("服务端接收到客户端信息：" + info );
+//            System.out.println("宸叉帴鏀跺埌瀹㈡埛绔繛鎺�");
+//            System.out.println("鏈嶅姟绔帴鏀跺埌瀹㈡埛绔俊鎭細" + info );
 //        }
 
         String message = "";
@@ -581,16 +580,16 @@ public class SubPolThread implements Runnable {
             int bufflenth = inputStream.available();
             if (bufflenth > 0) {
                 while (bufflenth != 0) {
-                    // 初始化byte数组为buffer中数据的长度
+                    // 鍒濆鍖朾yte鏁扮粍涓篵uffer涓暟鎹殑闀垮害
                     bytes = new byte[bufflenth];
                     inputStream.read(bytes);
                     bufflenth = inputStream.available();
                 }
                 message = StringUtil.str2HexStr(bytes);
-                System.out.println("接收到新报文：" + message);
+                System.out.println("鎺ユ敹鍒版柊鎶ユ枃锛�" + message);
             }
         } catch (Exception e) {
-            System.out.println("接收报文异常！");
+            System.out.println("鎺ユ敹鎶ユ枃寮傚父锛�");
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -599,7 +598,7 @@ public class SubPolThread implements Runnable {
     }
 
     /**
-     * 响应客户端信息
+     * 鍝嶅簲瀹㈡埛绔俊鎭�
      *
      * @param outputStream
      * @param string
@@ -610,15 +609,15 @@ public class SubPolThread implements Runnable {
 //        writer.flush();
 //        writer.close();
         try {
-//            System.out.println("发送的报文为：" + StringUtil.hexToBytes(string));
-//            outputStream.write(StringUtil.hexToBytes(string));//必须十六进制转byte类型才能进行控制
+//            System.out.println("鍙戦�佺殑鎶ユ枃涓猴細" + StringUtil.hexToBytes(string));
+//            outputStream.write(StringUtil.hexToBytes(string));//蹇呴』鍗佸叚杩涘埗杞琤yte绫诲瀷鎵嶈兘杩涜鎺у埗
 //            outputStream.flush();
             byte[] ss = StringUtil.hexStringToByteArray(string);
-            System.out.println("回复的报文为===" + ss.toString());
+            System.out.println("鍥炲鐨勬姤鏂囦负===" + ss.toString());
             outputStream.write(ss);
             outputStream.flush();
         } catch (IOException e) {
-            System.out.println("发送报文异常！");
+            System.out.println("鍙戦�佹姤鏂囧紓甯革紒");
             e.printStackTrace();
         }
 

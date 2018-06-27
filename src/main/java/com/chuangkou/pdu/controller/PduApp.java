@@ -1993,6 +1993,38 @@ public class PduApp extends BaseController {
             out = response.getWriter();
             GetDeviceRelationshipList = new GetDeviceRelationshipList();
 
+
+            List<GetDeviceRelationshipList.DeviceListBean> switchInPutList = new ArrayList<com.chuangkou.pdu.bean.GetDeviceRelationshipList.DeviceListBean>();
+
+            //搜索所有parent_id为空的设备
+            List<PduRelation> topList = new ArrayList<PduRelation>();
+            topList = pduRelationService.selectByParentIDEmpty();
+            //循环遍历所有的top设备
+            for(int top = 0; top < topList.size();top++) {
+                PduRelation topPdu = new PduRelation();
+                topPdu = topList.get(top);
+                topPdu.getPduID();
+
+                //返回顶级设备的信息
+                GetDeviceRelationshipList.DeviceListBean switchBean = getSwitchPduBean(topPdu.getPduID());
+
+                List<GetDeviceRelationshipList.DeviceListBean.ChildrensBean> childrensBeanList = new ArrayList<GetDeviceRelationshipList.DeviceListBean.ChildrensBean>();
+
+
+                List<PduRelation> onePduRelationList = new ArrayList<PduRelation>();
+                onePduRelationList = pduRelationService.selectBySubChildrensSwitcheAndPlugs(topPdu.getPduID());
+
+                List<PduRelation> resultTree = new ArrayList<PduRelation>();
+                resultTree = getTreeList(topPdu.getPduID(), onePduRelationList);
+
+                switchBean.setChildrens(resultTree);
+
+                switchInPutList.add(switchBean);
+                System.out.println("结束======");
+            }
+            GetDeviceRelationshipList.setDevice_list(switchInPutList);
+
+            /**
             //搜索所有的空开设备
             List<Pdu> switchList = new ArrayList<Pdu>();
             Pdu switchPdu = new Pdu();
@@ -2044,6 +2076,7 @@ public class PduApp extends BaseController {
                 switchInPutList.add(switchBean);
             }
             GetDeviceRelationshipList.setDevice_list(switchInPutList);
+             **/
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2240,11 +2273,113 @@ public class PduApp extends BaseController {
 //        end_date = sdf.parse(end_date).toString();
         int ID = Integer.valueOf(device_id);
 
-        access_token = "admin,21232F297A57A5A743894A0E4A801FC3,1528014909555";
+        access_token = "lxp,E10ADC3949BA59ABBE56E057F20F883E,1527243723306";
         //验证并解析token
         Token token = TokenUtil.apptokenyanzheng(access_token);
         if (token.getJieguo()) {
+            try {
+                if (query_type.equals("0")) {
 
+                    PduInfo pduInfo = new PduInfo();
+                    pduInfo.setPduid(ID);
+                    pduInfo.setStarttime(start_date);
+                    pduInfo.setEndtime(end_date);
+                    List<PduInfo> infoList = new ArrayList<PduInfo>();
+
+                    infoList = pduInfoService.selectAllByHistoryData(pduInfo);
+
+                    GetPduInfoHistory getPduInfoHistory = new GetPduInfoHistory();
+                    List<GetPduInfoHistory.HistoryListBean> powerList = new ArrayList<GetPduInfoHistory.HistoryListBean>();
+
+                    if (infoList.size() > 0) {
+
+                        for (int i = 0; i < infoList.size(); i++) {
+                            GetPduInfoHistory.HistoryListBean historyListBean = new GetPduInfoHistory.HistoryListBean();
+                            PduInfo pduInfoTwo = new PduInfo();
+                            pduInfoTwo = infoList.get(i);
+
+                            historyListBean.setDatetime(pduInfoTwo.getCollectiontime() + " 00:00:00");
+                            float  f = Float.parseFloat(pduInfoTwo.getResistance() == null ? "0": pduInfoTwo.getResistance());
+                            historyListBean.setValue(f);
+
+                            powerList.add(historyListBean);
+                        }
+                        getPduInfoHistory.setQuery_type(Integer.valueOf(query_type));
+                        getPduInfoHistory.setHistory_list(powerList);
+
+                        MsgBean<GetPduInfoHistory> msgBean = MsgBean.getInstance();
+                        msgBean.setData(getPduInfoHistory);
+
+                        PrintWriter out = response.getWriter();
+                        out.print(msgBean.toJsonString());
+                        out.flush();
+                        out.close();
+
+                    } else {
+
+                        String errormsg = "该时间区域内，设备" + device_id + "没有功率记录";
+                        MsgBean<GetPduInfoHistory> msgBean = MsgBean.getFalseInstance(errormsg);
+                        PrintWriter out = response.getWriter();
+                        out.print(msgBean.toJsonString());
+                        out.flush();
+                        out.close();
+                    }
+                } else {
+
+                    PduInfo pduInfo = new PduInfo();
+                    pduInfo.setPduid(ID);
+                    pduInfo.setStarttime(start_date);
+                    pduInfo.setEndtime(end_date);
+                    List<PduInfo> infoList = new ArrayList<PduInfo>();
+
+                    infoList = pduInfoService.selectAllByHistoryHours(pduInfo);
+
+                    GetPduInfoHistory getPduInfoHistory = new GetPduInfoHistory();
+                    List<GetPduInfoHistory.HistoryListBean> powerList = new ArrayList<GetPduInfoHistory.HistoryListBean>();
+
+                    if (infoList.size() > 0) {
+
+                        for (int i = 0; i < infoList.size(); i++) {
+                            GetPduInfoHistory.HistoryListBean historyListBean = new GetPduInfoHistory.HistoryListBean();
+                            PduInfo pduInfoTwo = new PduInfo();
+                            pduInfoTwo = infoList.get(i);
+
+                            historyListBean.setDatetime(pduInfoTwo.getCollectiontime());
+                            float  f = Float.parseFloat(pduInfoTwo.getResistance() == null ? "0": pduInfoTwo.getResistance());
+                            historyListBean.setValue(f);
+//                            historyListBean.setValue(Float.parseFloat(pduInfoTwo.getResistance()));
+
+                            powerList.add(historyListBean);
+                        }
+                        getPduInfoHistory.setQuery_type(Integer.valueOf(query_type));
+                        getPduInfoHistory.setHistory_list(powerList);
+
+                        MsgBean<GetPduInfoHistory> msgBean = MsgBean.getInstance();
+                        msgBean.setData(getPduInfoHistory);
+
+                        PrintWriter out = response.getWriter();
+                        out.print(msgBean.toJsonString());
+                        out.flush();
+                        out.close();
+
+                    } else {
+
+                        String errormsg = "该时间区域内，设备" + device_id + "没有功率记录";
+                        MsgBean<GetPduInfoHistory> msgBean = MsgBean.getFalseInstance(errormsg);
+                        PrintWriter out = response.getWriter();
+                        out.print(msgBean.toJsonString());
+                        out.flush();
+                        out.close();
+                    }
+
+
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            /**
             try {
                 if (query_type.equals("0")) {
 
@@ -2343,6 +2478,7 @@ public class PduApp extends BaseController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+             **/
         } else {
             PrintWriter out = response.getWriter();
             MsgBean msgBean = MsgBean.getTokenFalseInstance();
@@ -2381,10 +2517,14 @@ public class PduApp extends BaseController {
                 }
             }
 
+
+
             //获取每个顶层元素的子数据集合
             for (PduRelation entity : resultList) {
-                entity.setChildrens(getSubList(entity.getPduID(), entityList));
-
+//                List<PduRelation> eList = new ArrayList<PduRelation>();
+//                eList = pduRelationService.selectBySubChildrens(entity.getPduID());
+//                entity.setChildrens(getSubList(entity.getPduID(), eList));
+                  entity.setChildrens(getSubList(entity.getPduID(), entityList));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2399,7 +2539,7 @@ public class PduApp extends BaseController {
      * @param id
      * @param entityList
      * @return
-     * @author jianda
+     * @author
      * @date 2017年5月29日
      */
     private List<PduRelation> getSubList(int id, List<PduRelation> entityList) {

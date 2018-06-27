@@ -141,4 +141,47 @@ public class PduRelationService extends SqlSessionDaoSupport implements PduRelat
 //        return pduRelation;
 //    }
 
+
+    /**
+     *@Author:
+     *@Description:搜索顶级设备  parent_id == null
+     *@Date:
+     */
+
+    /**
+     *@Author:xulei
+     *@Description: 根据插座ID搜索关联的下级插座
+     *@Date:  2018-06-13
+     */
+
+    public List selectByParentIDEmpty() {
+        List<PduRelation> list  = new ArrayList<PduRelation>();
+
+        try {
+            list = getSqlSession().selectList("com.chuangkou.pdu.dao.PduRelationMapper.selectByParentIDEmpty");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+
+    /**
+     *@Author:xulei
+     *@Description: 搜索顶级空开下关联的插座和空开
+     *@Date:  2018-06-25
+     */
+
+    public List selectBySubChildrensSwitcheAndPlugs(Integer pduID) {
+        List<PduRelation> list  = new ArrayList<PduRelation>();
+
+        try {
+            list = getSqlSession().selectList("com.chuangkou.pdu.dao.PduRelationMapper.selectBySubChildrensSwitcheAndPlugs",pduID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

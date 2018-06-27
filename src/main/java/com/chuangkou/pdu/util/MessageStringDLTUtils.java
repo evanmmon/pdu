@@ -3,20 +3,19 @@ package com.chuangkou.pdu.util;
 import com.chuangkou.pdu.entity.MessageDLT;
 import com.chuangkou.pdu.entity.PduInfoTemp;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 
 import java.text.SimpleDateFormat;
 
 /**
  * @Author:xulei
- * @Description:645协议报文工具类
+ * @Description:645鍗忚鎶ユ枃宸ュ叿绫�
  * @Date:Created in 10:36 2018/4/22
  */
 public class MessageStringDLTUtils {
 
     /**
      * @Author:xulei
-     * @Description:主站读报文组合、写报文组合
+     * @Description:涓荤珯璇绘姤鏂囩粍鍚堛�佸啓鎶ユ枃缁勫悎
      * @Date: 2018-05-02
      */
     public static String messageToHex(MessageDLT message, String action) {
@@ -28,7 +27,7 @@ public class MessageStringDLTUtils {
             machineAddress = addZeroForNumLeft(machineAddress, 12);
             machineAddress = machineAddressHex(machineAddress);
 
-            if (action.equals("read")) {//主站读数据
+            if (action.equals("read")) {//涓荤珯璇绘暟鎹�
                 MessageDLT messageBean = new MessageDLT();
 
                 String dataStr = dateIDhex(message.getDataStr());
@@ -52,7 +51,7 @@ public class MessageStringDLTUtils {
                         messageBean.getDataStr() + messageBean.getDatasum() + messageBean.getEndStr();
             }
 
-            if (action.equals("write")) {//主站写数据
+            if (action.equals("write")) {//涓荤珯鍐欐暟鎹�
                 MessageDLT messageBean = new MessageDLT();
                 String dataTab = dateIDhex(message.getDataTab());
                 String dataStr = dateIDhex(message.getDataStr());
@@ -63,7 +62,7 @@ public class MessageStringDLTUtils {
                 messageBean.setControl(message.getControl());
 
                 String data = message.getDataTab() + message.getPassword() + message.getAuth() + message.getDataStr();
-                //数据长度需要转成16进制
+                //鏁版嵁闀垮害闇�瑕佽浆鎴�16杩涘埗
                 String dateLong = addZeroForNumLeft(String.valueOf(Integer.toHexString(data.length() / 2)), 2);
 
                 messageBean.setDataLong(dateLong);
@@ -93,10 +92,10 @@ public class MessageStringDLTUtils {
 
 
     /**
-     * @param :旧设备地址、旧数据标、回复数据
-     * @return :回复报文
+     * @param :鏃ц澶囧湴鍧�銆佹棫鏁版嵁鏍囥�佸洖澶嶆暟鎹�
+     * @return :鍥炲鎶ユ枃
      * @Author:xulei
-     * @Description:645下位机上发的报文，进行回复
+     * @Description:645涓嬩綅鏈轰笂鍙戠殑鎶ユ枃锛岃繘琛屽洖澶�
      * @Date: 208-05-02
      */
     public static String receiveMessageToHex(MessageDLT message) {
@@ -105,16 +104,16 @@ public class MessageStringDLTUtils {
 
         MessageDLT messageBean = new MessageDLT();
 
-        String machineAddress = message.getMachineAddress();//旧地址
+        String machineAddress = message.getMachineAddress();//鏃у湴鍧�
         machineAddress = machineAddressHex(machineAddress);
-        String dataTab = message.getDataTab();//旧数据标
+        String dataTab = message.getDataTab();//鏃ф暟鎹爣
 
         String dataStr = dataTab + dateIDhex(message.getDataStr());
         String dateLong = addZeroForNumLeft(String.valueOf(dataStr.length() / 2), 2);
         String control = "91";
 
         String datesum = makeChecksum(makeChecksum("68" + machineAddress + "68" + control + dateLong + dataStr));
-        String head = "FEFEFEFE";//回复数据头
+        String head = "FEFEFEFE";//鍥炲鏁版嵁澶�
         messageBean.setStartFrame("68");
         messageBean.setMachineAddress(machineAddress);
         messageBean.setStartFrame2("68");
@@ -135,10 +134,10 @@ public class MessageStringDLTUtils {
 
 
     /**
-     * @param :旧设备地址、旧数据标、回复数据
-     * @return :回复报文
+     * @param :鏃ц澶囧湴鍧�銆佹棫鏁版嵁鏍囥�佸洖澶嶆暟鎹�
+     * @return :鍥炲鎶ユ枃
      * @Author:xulei
-     * @Description:645下位机上发的报文，进行回复
+     * @Description:645涓嬩綅鏈轰笂鍙戠殑鎶ユ枃锛岃繘琛屽洖澶�
      * @Date: 208-05-02
      */
     public static String receiveUpdateToIp(MessageDLT message) {
@@ -153,7 +152,7 @@ public class MessageStringDLTUtils {
         String dataStr = message.getDataStr();
 
         String datesum = message.getDatasum();
-        String head = "FEFEFEFE";//回复数据头
+        String head = "FEFEFEFE";//鍥炲鏁版嵁澶�
         messageBean.setStartFrame("68");
         messageBean.setMachineAddress(machineAddress);
         messageBean.setStartFrame2("68");
@@ -176,10 +175,10 @@ public class MessageStringDLTUtils {
 
     /**
      * @Author:xulei
-     * @Description:解析报文数据,返回报文中的值
+     * @Description:瑙ｆ瀽鎶ユ枃鏁版嵁,杩斿洖鎶ユ枃涓殑鍊�
      * @Date: 2018-4-22
-     * @param：收到的报文、旧设备地址、旧数据标
-     * @return：返回解析后的数据值
+     * @param锛氭敹鍒扮殑鎶ユ枃銆佹棫璁惧鍦板潃銆佹棫鏁版嵁鏍�
+     * @return锛氳繑鍥炶В鏋愬悗鐨勬暟鎹��
      */
 
     public static String receiveMessageToDate(String receiveMessage, MessageDLT sendMessage) {
@@ -187,7 +186,7 @@ public class MessageStringDLTUtils {
         String msg = "";
         String receiveHead = receiveMessage.substring(0, 8);
         String receiveEnd = receiveMessage.substring(receiveMessage.length() - 2, receiveMessage.length());
-//        if (receiveHead.equals("FEFEFEFE") && receiveEnd.equals("16")) {//先判断报文头和尾是否正确
+//        if (receiveHead.equals("FEFEFEFE") && receiveEnd.equals("16")) {//鍏堝垽鏂姤鏂囧ご鍜屽熬鏄惁姝ｇ‘
         MessageDLT messageDLT = new MessageDLT();
 
         messageDLT.setStartFrame(receiveMessage.substring(8, 10));
@@ -203,36 +202,36 @@ public class MessageStringDLTUtils {
 
         String olddatastr = "";
         String oldaddress = "";
-        //判断的返回报文如果是异常数据格式，则返回二进制异常
+        //鍒ゆ柇鐨勮繑鍥炴姤鏂囧鏋滄槸寮傚父鏁版嵁鏍煎紡锛屽垯杩斿洖浜岃繘鍒跺紓甯�
         String controlID = receiveMessage.substring(24, 25);
         if (!controlID.equals("D")) {
-            oldaddress = machineAddressHex(sendMessage.getMachineAddress());//地址倒序
-            olddatastr = dateIDhex(sendMessage.getDataStr());//数据标倒序
-            if (messageDLT.getMachineAddress().equals(oldaddress)) {//验证返回的设备ID是否相同
+            oldaddress = machineAddressHex(sendMessage.getMachineAddress());//鍦板潃鍊掑簭
+            olddatastr = dateIDhex(sendMessage.getDataStr());//鏁版嵁鏍囧�掑簭
+            if (messageDLT.getMachineAddress().equals(oldaddress)) {//楠岃瘉杩斿洖鐨勮澶嘔D鏄惁鐩稿悓
                 String dataStr = messageDLT.getDataStr();
                 if(dataStr.length() > 8) {
 //                    System.out.println("olddatastr===" + olddatastr);
 //                    System.out.println("dataStr===" + dataStr.substring(0, 8));
-                    if (olddatastr.equals(dataStr.substring(0, 8))) {//判断数据标是否一致
-                        //获取返回数据值
+                    if (olddatastr.equals(dataStr.substring(0, 8))) {//鍒ゆ柇鏁版嵁鏍囨槸鍚︿竴鑷�
+                        //鑾峰彇杩斿洖鏁版嵁鍊�
                         String datainfo = dataStr.substring(8, dataStr.length());
 
-                        //解析十六进制返回数据；
+                        //瑙ｆ瀽鍗佸叚杩涘埗杩斿洖鏁版嵁锛�
                         msg = receiverVlue(datainfo);
 
                     } else {
-                        System.out.println("返回数据标异常！");
+                        System.out.println("杩斿洖鏁版嵁鏍囧紓甯革紒");
                     }
                 }
             } else {
 
-                System.out.println("返回设备ID异常!");
+                System.out.println("杩斿洖璁惧ID寮傚父!");
             }
 
         } else {
-            //解析错误报文
+            //瑙ｆ瀽閿欒鎶ユ枃
             String errors = errorMessage(receiveMessage);
-            System.out.println("返回错误异常!错误代码：" + errors);
+            System.out.println("杩斿洖閿欒寮傚父!閿欒浠ｇ爜锛�" + errors);
 
         }
 
@@ -243,10 +242,10 @@ public class MessageStringDLTUtils {
 
     /**
      * @Author:xulei
-     * @Description:通用645报文解析
+     * @Description:閫氱敤645鎶ユ枃瑙ｆ瀽
      * @Date: 208-05-2
-     * @param：收到的报文
-     * @return：解析后的报文类
+     * @param锛氭敹鍒扮殑鎶ユ枃
+     * @return锛氳В鏋愬悗鐨勬姤鏂囩被
      */
 
     public static MessageDLT receiveMessageToBean(String receiveMessage) {
@@ -254,7 +253,7 @@ public class MessageStringDLTUtils {
 
 //        String receiveHead = receiveMessage.substring(0, 8);
 //        String receiveEnd = receiveMessage.substring(receiveMessage.length() - 2, receiveMessage.length());
-//        if (receiveHead.equals("FEFEFEFE") && receiveEnd.equals("16")) {//先判断报文头和尾是否正确
+//        if (receiveHead.equals("FEFEFEFE") && receiveEnd.equals("16")) {//鍏堝垽鏂姤鏂囧ご鍜屽熬鏄惁姝ｇ‘
         try {
             if(receiveMessage != null) {
                 if (!receiveMessage.equals("") && receiveMessage.length() >= 32) {
@@ -268,7 +267,7 @@ public class MessageStringDLTUtils {
                     int along = 28 + datalong * 2;
 //                    System.out.println("along===" + along);
 
-                    if (datalong >= 4) {//例如 拉闸、合闸、预警一些报文没有返回标记的
+                    if (datalong >= 4) {//渚嬪 鎷夐椄銆佸悎闂搞�侀璀︿竴浜涙姤鏂囨病鏈夎繑鍥炴爣璁扮殑
                         messageDLT.setDataTab(receiveMessage.substring(28, 28 + 8));
                         messageDLT.setDataStr(receiveMessage.substring(28 + 8, along));
                     }
@@ -278,7 +277,7 @@ public class MessageStringDLTUtils {
                         messageDLT.setDataStr(receiveMessage.substring(28, along));
                     }
 
-                    if (datalong == 0) {//拉闸的时候回返回数据长度为0
+                    if (datalong == 0) {//鎷夐椄鐨勬椂鍊欏洖杩斿洖鏁版嵁闀垮害涓�0
                         messageDLT.setDataTab("");
                         messageDLT.setDataStr("");
                     }
@@ -297,10 +296,10 @@ public class MessageStringDLTUtils {
 
     /**
      * @Author:xulei
-     * @Description:645设备上线发送报文
+     * @Description:645璁惧涓婄嚎鍙戦�佹姤鏂�
      * @Date: 208-05-2
-     * @param：收到的报文
-     * @return：解析后的报文类
+     * @param锛氭敹鍒扮殑鎶ユ枃
+     * @return锛氳В鏋愬悗鐨勬姤鏂囩被
      */
 
     public static MessageDLT onlineMessage(String receiveMessage) {
@@ -327,7 +326,7 @@ public class MessageStringDLTUtils {
 //            System.out.println("along===" + along);
 
 
-            if (datalong >= 4) {//例如 拉闸、合闸、预警一些报文没有返回标记的
+            if (datalong >= 4) {//渚嬪 鎷夐椄銆佸悎闂搞�侀璀︿竴浜涙姤鏂囨病鏈夎繑鍥炴爣璁扮殑
 //                System.out.println("onlineMessage2====" + receiveMessage);
                 messageDLT.setDataTab(receiveMessage.substring(20, 20 + 8));
                 messageDLT.setDataStr(receiveMessage.substring(20 + 8, along));
@@ -338,7 +337,7 @@ public class MessageStringDLTUtils {
                 messageDLT.setDataStr(receiveMessage.substring(20, along));
             }
 
-            if (datalong == 0) {//拉闸的时候回返回数据长度为0
+            if (datalong == 0) {//鎷夐椄鐨勬椂鍊欏洖杩斿洖鏁版嵁闀垮害涓�0
                 messageDLT.setDataTab("");
                 messageDLT.setDataStr("");
             }
@@ -349,7 +348,7 @@ public class MessageStringDLTUtils {
         return messageDLT;
     }
 
-    //解析16进制回复值
+    //瑙ｆ瀽16杩涘埗鍥炲鍊�
     public static String receiverVlue(String datainfo) {
         String send = "";
         long x = 0;
@@ -366,7 +365,7 @@ public class MessageStringDLTUtils {
                 String temp = String.valueOf(Long.toHexString(x - y));
 //                System.out.println("temp==" + temp);
                 if (temp.length() > 2) {
-                    send += temp.substring(temp.length() - 2, temp.length());//当ff+33时=132，取后两位
+                    send += temp.substring(temp.length() - 2, temp.length());//褰揻f+33鏃�=132锛屽彇鍚庝袱浣�
                 } else {
                     send += addZeroForNumLeft(temp, 2);
                 }
@@ -381,7 +380,7 @@ public class MessageStringDLTUtils {
 
     /**
      * @Author:xulei
-     * @Description:解析错误报文回复
+     * @Description:瑙ｆ瀽閿欒鎶ユ枃鍥炲
      * @Date: 2018-4-22
      */
     public static String errorMessage(String errormsg) {
@@ -395,7 +394,7 @@ public class MessageStringDLTUtils {
     }
 
 
-    //解析数据标 加33 倒序
+    //瑙ｆ瀽鏁版嵁鏍� 鍔�33 鍊掑簭
     public static String dateIDhex(String dataID) {
 
         String send = "";
@@ -408,7 +407,7 @@ public class MessageStringDLTUtils {
                 String str = dataID.substring(dataID.length() - start, dataID.length() - end);
                 x = Long.parseLong(str, 16);
                 String temp = String.valueOf(Long.toHexString(x + y));
-                send += temp.substring(temp.length() - 2, temp.length());//当ff+33时=132，取后两位
+                send += temp.substring(temp.length() - 2, temp.length());//褰揻f+33鏃�=132锛屽彇鍚庝袱浣�
                 start += 2;
                 end += 2;
             }
@@ -416,38 +415,38 @@ public class MessageStringDLTUtils {
 
 //        System.out.println("send===" + send);
 
-//		if(dataID.equals("02030100")) {//有功功率
+//		if(dataID.equals("02030100")) {//鏈夊姛鍔熺巼
 //			dataID = "33343635";
 //		}
-//		if(dataID.equals("02040100")) {//无功功率
+//		if(dataID.equals("02040100")) {//鏃犲姛鍔熺巼
 //			dataID = "33343735";
 //		}
-//		if(dataID.equals("00000000")) {//有功电量
+//		if(dataID.equals("00000000")) {//鏈夊姛鐢甸噺
 //			dataID = "33333333";
 //		}
-//		if(dataID.equals("00030000")) {//无功电量
+//		if(dataID.equals("00030000")) {//鏃犲姛鐢甸噺
 //			dataID = "33333633";
 //		}
-//		if(dataID.equals("02010100")) {//电压
+//		if(dataID.equals("02010100")) {//鐢靛帇
 //			dataID = "33343435";
 //		}
-//		if(dataID.equals("02020100")) {//电流
+//		if(dataID.equals("02020100")) {//鐢垫祦
 //			dataID = "33343535";
 //		}
-//		if(dataID.equals("02060100")) {//功率因数
+//		if(dataID.equals("02060100")) {//鍔熺巼鍥犳暟
 //			dataID = "33343935";
 //		}
-//		if(dataID.equals("02800002")) {//频率
+//		if(dataID.equals("02800002")) {//棰戠巼
 //			dataID = "3533B335";
 //		}
-//		if(dataID.equals("04000101")) {//时期及星期
+//		if(dataID.equals("04000101")) {//鏃舵湡鍙婃槦鏈�
 //			dataID = "34343337";
 //		}
 
         return send;
     }
 
-    //组合设备地址 倒序
+    //缁勫悎璁惧鍦板潃 鍊掑簭
     public static String machineAddressHex(String address) {
 
         String addressHex = "";
@@ -467,7 +466,7 @@ public class MessageStringDLTUtils {
         return addressHex;
     }
 
-    //组合设备地址 正序
+    //缁勫悎璁惧鍦板潃 姝ｅ簭
     public static String machineAddressHexOpposite(String address) {
 
         String addressHex = "";
@@ -492,8 +491,8 @@ public class MessageStringDLTUtils {
         if (strLen < strLength) {
             while (strLen < strLength) {
                 StringBuffer sb = new StringBuffer();
-//		    sb.append("0").append(str);//左补0
-                sb.append(str).append("0");//右补0
+//		    sb.append("0").append(str);//宸﹁ˉ0
+                sb.append(str).append("0");//鍙宠ˉ0
                 str = sb.toString();
                 strLen = str.length();
             }
@@ -507,8 +506,8 @@ public class MessageStringDLTUtils {
         if (strLen < strLength) {
             while (strLen < strLength) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("0").append(str);//左补0
-//		    sb.append(str).append("0");//右补0
+                sb.append("0").append(str);//宸﹁ˉ0
+//		    sb.append(str).append("0");//鍙宠ˉ0
                 str = sb.toString();
                 strLen = str.length();
             }
@@ -517,7 +516,7 @@ public class MessageStringDLTUtils {
         return str;
     }
 
-    //16进制累加和
+    //16杩涘埗绱姞鍜�
     public static String makeChecksum(String data) {
         if (data == null || data.equals("")) {
             return "";
@@ -532,12 +531,12 @@ public class MessageStringDLTUtils {
             num = num + 2;
         }
         /**
-         * 用256求余最大是255，即16进制的FF
+         * 鐢�256姹備綑鏈�澶ф槸255锛屽嵆16杩涘埗鐨凢F
          */
         int mod = total % 256;
         String hex = Integer.toHexString(mod);
         len = hex.length();
-        // 如果不够校验位的长度，补0,这里用的是两位校验
+        // 濡傛灉涓嶅鏍￠獙浣嶇殑闀垮害锛岃ˉ0,杩欓噷鐢ㄧ殑鏄袱浣嶆牎楠�
         if (len < 2) {
             hex = "0" + hex;
         }
@@ -547,7 +546,7 @@ public class MessageStringDLTUtils {
 
     /**
      * @Author:
-     * @Description:字符串转十六进制字符串
+     * @Description:瀛楃涓茶浆鍗佸叚杩涘埗瀛楃涓�
      * @Date:
      */
     public static String str2HexStr(String str) {
@@ -569,7 +568,7 @@ public class MessageStringDLTUtils {
         return Long.valueOf(str.substring(start, end), 16).toString();
     }
 
-    //十六进制字符串转二进制字符串
+    //鍗佸叚杩涘埗瀛楃涓茶浆浜岃繘鍒跺瓧绗︿覆
     public static String hexString2binaryString(String hexString) {
         if (hexString == null || hexString.length() % 2 != 0)
             return null;
