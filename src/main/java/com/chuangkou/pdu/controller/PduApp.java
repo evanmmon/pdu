@@ -7,6 +7,7 @@ import com.chuangkou.pdu.thread.PduActionThread;
 import com.chuangkou.pdu.thread.PduClockSetThread;
 import com.chuangkou.pdu.thread.PduWarningSetThread;
 import com.chuangkou.pdu.util.LogUtil;
+import com.chuangkou.pdu.util.MyException;
 import com.chuangkou.pdu.util.StringUtil;
 import com.chuangkou.pdu.util.TokenUtil;
 import com.chuangkou.pdu.util.PropertiesUtils;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -2584,6 +2586,13 @@ public class PduApp extends BaseController {
         }
 
         return childList;
+    }
+    
+    @RequestMapping("/device/device_tree")
+    public String deviceTree(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
+        System.out.print(request.getSession().getServletContext().getRealPath(""));
+        //request.getRequestDispatcher("device_tree.html").forward(request, response);
+        return "/device_tree";
     }
 }
 
