@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduWarningSetMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduWarningSet">
+    <result column="pduID" jdbcType="INTEGER" property="pduid" />
+    <result column="voltage" jdbcType="VARCHAR" property="voltage" />
+    <result column="current" jdbcType="VARCHAR" property="current" />
+    <result column="watt" jdbcType="VARCHAR" property="watt" />
+    <result column="relayState" jdbcType="VARCHAR" property="relaystate" />
+    <result column="overvoltage" jdbcType="VARCHAR" property="overvoltage" />
+    <result column="undervoltage" jdbcType="VARCHAR" property="undervoltage" />
+    <result column="overcurrent" jdbcType="VARCHAR" property="overcurrent" />
+    <result column="circuitbreaker" jdbcType="VARCHAR" property="circuitbreaker" />
+    <result column="electricleakage" jdbcType="VARCHAR" property="electricleakage" />
+    <result column="powerremind" jdbcType="VARCHAR" property="powerremind" />
+    <result column="setingVoltage" jdbcType="REAL" property="setingvoltage" />
+    <result column="wattAmplitude" jdbcType="REAL" property="wattamplitude" />
+    <result column="currentAmplitude" jdbcType="REAL" property="currentamplitude" />
+
+    <result column="powerStartDelay" jdbcType="INTEGER" property="powerStartDelay" />
+    <result column="powerResumeDelay" jdbcType="INTEGER" property="powerResumeDelay" />
+    <result column="voltageStartDelay" jdbcType="INTEGER" property="voltageStartDelay" />
+    <result column="voltageResumedDelay" jdbcType="INTEGER" property="voltageResumedDelay" />
+    <result column="currentStartDelay" jdbcType="INTEGER" property="currentStartDelay" />
+    <result column="currentResumeDelay" jdbcType="INTEGER" property="currentResumeDelay" />
+
+    <result column="electricityRemind" jdbcType="INTEGER" property="electricityRemind" />
+    <result column="lowerLimitQuantity" jdbcType="REAL" property="lowerLimitQuantity" />
+
+    <result column="temperatureRemind" jdbcType="INTEGER" property="temperatureRemind" />
+    <result column="temperatureAmplitude" jdbcType="REAL" property="temperatureAmplitude" />
+    <result column="temperatureStartDelay" jdbcType="INTEGER" property="temperatureStartDelay" />
+    <result column="temperatureResumeDelay" jdbcType="INTEGER" property="temperatureResumeDelay" />
+
+    <result column="poorContactRemind" jdbcType="INTEGER" property="poorContactRemind" />
+    <result column="poorContact" jdbcType="INTEGER" property="poorContact" />
+
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    pduID, voltage, current,
+      watt, relayState, overvoltage,
+      undervoltage, overcurrent, circuitbreaker,
+      electricleakage,powerremind,setingVoltage,wattAmplitude,currentAmplitude,
+      powerStartDelay,powerResumeDelay,voltageStartDelay,voltageResumedDelay,currentStartDelay,currentResumeDelay,
+      electricityRemind,lowerLimitQuantity,temperatureRemind,temperatureAmplitude,temperatureStartDelay,
+      temperatureResumeDelay,poorContactRemind,poorContact
+  </sql>
+
+
+  <select id="selectOne"  resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+     from tb_pdu_warning_set where pduID = #{pduid,jdbcType=INTEGER}
+  </select>
+
+
+
+
+  <!--更新-->
+  <update id="update" parameterType="com.chuangkou.pdu.entity.PduWarningSet">
+    update tb_pdu_warning_set
+    <set>
+      <if test="voltage != null">
+        voltage= #{voltage,jdbcType=VARCHAR},
+      </if>
+      <if test="current != null">
+        current= #{current,jdbcType=VARCHAR},
+      </if>
+      <if test="watt != null">
+        watt= #{watt,jdbcType=VARCHAR},
+      </if>
+      <if test="relaystate != null">
+        relaystate= #{relaystate,jdbcType=VARCHAR},
+      </if>
+      <if test="overvoltage != null">
+        overvoltage= #{overvoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="undervoltage != null">
+        undervoltage= #{undervoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="overcurrent != null">
+        overcurrent= #{overcurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="circuitbreaker != null">
+        circuitbreaker= #{circuitbreaker,jdbcType=VARCHAR},
+      </if>
+      <if test="electricleakage != null">
+        electricleakage= #{electricleakage,jdbcType=VARCHAR},
+      </if>
+      <if test="powerremind != null">
+        powerremind= #{powerremind,jdbcType=VARCHAR},
+      </if>
+      <if test="setingvoltage != null">
+        setingvoltage = #{setingvoltage,jdbcType=REAL},
+      </if>
+      <if test="wattamplitude != null">
+        wattamplitude= #{wattamplitude,jdbcType=REAL},
+      </if>
+      <if test="currentamplitude != null">
+        currentamplitude= #{currentamplitude,jdbcType=REAL},
+      </if>
+
+      <if test="powerStartDelay != null">
+        powerStartDelay= #{powerStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="powerResumeDelay != null">
+        powerResumeDelay= #{powerResumeDelay,jdbcType=INTEGER},
+      </if>
+      <if test="voltageStartDelay != null">
+        voltageStartDelay= #{voltageStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="voltageResumedDelay != null">
+        voltageResumedDelay= #{voltageResumedDelay,jdbcType=INTEGER},
+      </if>
+      <if test="currentStartDelay != null">
+        currentStartDelay= #{currentStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="currentResumeDelay != null">
+        currentResumeDelay= #{currentResumeDelay,jdbcType=INTEGER},
+      </if>
+
+
+      <if test="electricityRemind != null">
+        electricityRemind = #{electricityRemind,jdbcType=INTEGER},
+      </if>
+      <if test="lowerLimitQuantity != null">
+        lowerLimitQuantity = #{lowerLimitQuantity,jdbcType=REAL},
+      </if>
+
+      <if test="temperatureRemind != null">
+        temperatureRemind= #{temperatureRemind,jdbcType=INTEGER},
+      </if>
+      <if test="temperatureAmplitude != null">
+        temperatureAmplitude= #{temperatureAmplitude,jdbcType=REAL},
+      </if>
+      <if test="temperatureStartDelay != null">
+        temperatureStartDelay= #{temperatureStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="temperatureResumeDelay != null">
+        temperatureResumeDelay= #{temperatureResumeDelay,jdbcType=INTEGER},
+      </if>
+
+      <if test="poorContactRemind != null">
+        poorContactRemind= #{poorContactRemind,jdbcType=INTEGER},
+      </if>
+      <if test="poorContact != null">
+        poorContact= #{poorContact,jdbcType=INTEGER},
+      </if>
+
+    </set>
+    where pduID = #{pduid,jdbcType=INTEGER}
+  </update>
+
+
+
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduWarningSet">
+    insert into tb_pdu_warning_set (pduID, voltage, current,
+      watt, relayState, overvoltage,
+      undervoltage, overcurrent, circuitbreaker,
+      electricleakage, powerremind, setingVoltage,
+      wattAmplitude, currentAmplitude,powerStartDelay,powerResumeDelay,voltageStartDelay,voltageResumedDelay,currentStartDelay,currentResumeDelay,
+      electricityRemind,lowerLimitQuantity,temperatureRemind,temperatureAmplitude,temperatureStartDelay,
+      temperatureResumeDelay,poorContactRemind,poorContact)
+    values (#{pduid,jdbcType=INTEGER}, #{voltage,jdbcType=VARCHAR}, #{current,jdbcType=VARCHAR},
+      #{watt,jdbcType=VARCHAR}, #{relaystate,jdbcType=VARCHAR}, #{overvoltage,jdbcType=VARCHAR},
+      #{undervoltage,jdbcType=VARCHAR}, #{overcurrent,jdbcType=VARCHAR}, #{circuitbreaker,jdbcType=VARCHAR},
+      #{electricleakage,jdbcType=VARCHAR}, #{powerremind,jdbcType=VARCHAR}, #{setingvoltage,jdbcType=REAL},
+      #{wattamplitude,jdbcType=REAL}, #{currentamplitude,jdbcType=REAL},
+      #{powerStartDelay,jdbcType=INTEGER}, #{powerResumeDelay,jdbcType=INTEGER}, #{voltageStartDelay,jdbcType=INTEGER}
+      #{voltageResumedDelay,jdbcType=INTEGER}, #{currentStartDelay,jdbcType=INTEGER}, #{currentResumeDelay,jdbcType=INTEGER},
+      #{electricityRemind,jdbcType=INTEGER},#{lowerLimitQuantity,jdbcType=REAL},
+      #{temperatureRemind,jdbcType=INTEGER},#{temperatureAmplitude,jdbcType=REAL},#{temperatureStartDelay,jdbcType=INTEGER},
+      #{temperatureResumeDelay,jdbcType=INTEGER},
+      #{poorContactRemind,jdbcType=INTEGER},#{poorContact,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduWarningSet">
+    insert into tb_pdu_warning_set
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pduid != null">
+        pduID,
+      </if>
+      <if test="voltage != null">
+        voltage,
+      </if>
+      <if test="current != null">
+        current,
+      </if>
+      <if test="watt != null">
+        watt,
+      </if>
+      <if test="relaystate != null">
+        relayState,
+      </if>
+      <if test="overvoltage != null">
+        overvoltage,
+      </if>
+      <if test="undervoltage != null">
+        undervoltage,
+      </if>
+      <if test="overcurrent != null">
+        overcurrent,
+      </if>
+      <if test="circuitbreaker != null">
+        circuitbreaker,
+      </if>
+      <if test="electricleakage != null">
+        electricleakage,
+      </if>
+      <if test="powerremind != null">
+        powerremind,
+      </if>
+      <if test="setingvoltage != null">
+        setingVoltage,
+      </if>
+      <if test="wattamplitude != null">
+        wattAmplitude,
+      </if>
+      <if test="currentamplitude != null">
+        currentAmplitude,
+      </if>
+
+      <if test="powerStartDelay != null">
+        powerStartDelay,
+      </if>
+      <if test="powerResumeDelay != null">
+        powerResumeDelay,
+      </if>
+      <if test="voltageStartDelay != null">
+        voltageStartDelay,
+      </if>
+      <if test="voltageResumedDelay != null">
+        voltageResumedDelay,
+      </if>
+      <if test="currentStartDelay != null">
+        currentStartDelay,
+      </if>
+      <if test="currentResumeDelay != null">
+        currentResumeDelay,
+      </if>
+
+
+      <if test="electricityRemind != null">
+        electricityRemind,
+      </if>
+      <if test="lowerLimitQuantity != null">
+        lowerLimitQuantity,
+      </if>
+
+      <if test="temperatureRemind != null">
+        temperatureRemind,
+      </if>
+      <if test="temperatureAmplitude != null">
+        temperatureAmplitude,
+      </if>
+      <if test="temperatureStartDelay != null">
+        temperatureStartDelay,
+      </if>
+      <if test="temperatureResumeDelay != null">
+        temperatureResumeDelay,
+      </if>
+
+      <if test="poorContactRemind != null">
+        poorContactRemind,
+      </if>
+      <if test="poorContact != null">
+        poorContact,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pduid != null">
+        #{pduid,jdbcType=INTEGER},
+      </if>
+      <if test="voltage != null">
+        #{voltage,jdbcType=VARCHAR},
+      </if>
+      <if test="current != null">
+        #{current,jdbcType=VARCHAR},
+      </if>
+      <if test="watt != null">
+        #{watt,jdbcType=VARCHAR},
+      </if>
+      <if test="relaystate != null">
+        #{relaystate,jdbcType=VARCHAR},
+      </if>
+      <if test="overvoltage != null">
+        #{overvoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="undervoltage != null">
+        #{undervoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="overcurrent != null">
+        #{overcurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="circuitbreaker != null">
+        #{circuitbreaker,jdbcType=VARCHAR},
+      </if>
+      <if test="electricleakage != null">
+        #{electricleakage,jdbcType=VARCHAR},
+      </if>
+      <if test="powerremind != null">
+        #{powerremind,jdbcType=VARCHAR},
+      </if>
+      <if test="setingvoltage != null">
+        #{setingvoltage,jdbcType=REAL},
+      </if>
+      <if test="wattamplitude != null">
+        #{wattamplitude,jdbcType=REAL},
+      </if>
+      <if test="currentamplitude != null">
+        #{currentamplitude,jdbcType=REAL},
+      </if>
+
+      <if test="powerStartDelay != null">
+         #{powerStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="powerResumeDelay != null">
+         #{powerResumeDelay,jdbcType=INTEGER},
+      </if>
+      <if test="voltageStartDelay != null">
+         #{voltageStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="voltageResumedDelay != null">
+         #{voltageResumedDelay,jdbcType=INTEGER},
+      </if>
+      <if test="currentStartDelay != null">
+         #{currentStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="currentResumeDelay != null">
+         #{currentResumeDelay,jdbcType=INTEGER},
+      </if>
+
+
+      <if test="electricityRemind != null">
+        #{electricityRemind,jdbcType=REAL},
+      </if>
+      <if test="lowerLimitQuantity != null">
+        #{lowerLimitQuantity,jdbcType=REAL},
+      </if>
+
+      <if test="temperatureRemind != null">
+        #{temperatureRemind,jdbcType=REAL},
+      </if>
+      <if test="temperatureAmplitude != null">
+        #{temperatureAmplitude,jdbcType=REAL},
+      </if>
+      <if test="temperatureStartDelay != null">
+        #{temperatureStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="temperatureResumeDelay != null">
+        #{temperatureResumeDelay,jdbcType=INTEGER},
+      </if>
+
+      <if test="poorContactRemind != null">
+        #{poorContactRemind,jdbcType=INTEGER},
+      </if>
+      <if test="poorContact != null">
+        #{poorContact,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <!--xulei add 2018-02-26 根据设备ID查找设备预警设置值-->
+  <select id="selectByPduWarningSet" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_pdu_warning_set
+    where pduID = #{pduid,jdbcType=INTEGER}
+  </select>
+
+
+  <update id="updateByPduWarningSet" parameterType="com.chuangkou.pdu.entity.PduWarningSet">
+    update tb_pdu_warning_set
+    <set>
+      <if test="voltage != null">
+        voltage = #{voltage,jdbcType=VARCHAR},
+      </if>
+      <if test="current != null">
+        current = #{current,jdbcType=VARCHAR},
+      </if>
+      <if test="watt != null">
+        watt = #{watt,jdbcType=VARCHAR},
+      </if>
+      <if test="relaystate != null">
+        relaystate = #{relaystate,jdbcType=VARCHAR},
+      </if>
+      <if test="overvoltage != null">
+        overvoltage = #{overvoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="undervoltage != null">
+        undervoltage = #{undervoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="overcurrent != null">
+        overcurrent = #{overcurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="circuitbreaker != null">
+        circuitbreaker = #{circuitbreaker,jdbcType=VARCHAR},
+      </if>
+      <if test="electricleakage != null">
+        electricleakage = #{electricleakage,jdbcType=VARCHAR},
+      </if>
+      <if test="powerremind != null">
+        powerremind = #{powerremind,jdbcType=VARCHAR},
+      </if>
+      <if test="setingvoltage != null">
+        setingvoltage = #{setingvoltage,jdbcType=REAL},
+      </if>
+      <if test="wattamplitude != null">
+        wattamplitude = #{wattamplitude,jdbcType=REAL},
+      </if>
+      <if test="currentamplitude != null">
+        currentamplitude = #{currentamplitude,jdbcType=REAL},
+      </if>
+
+      <if test="powerStartDelay != null">
+        powerStartDelay= #{powerStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="powerResumeDelay != null">
+        powerResumeDelay= #{powerResumeDelay,jdbcType=INTEGER},
+      </if>
+      <if test="voltageStartDelay != null">
+        voltageStartDelay= #{voltageStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="voltageResumedDelay != null">
+        voltageResumedDelay= #{voltageResumedDelay,jdbcType=INTEGER},
+      </if>
+      <if test="currentStartDelay != null">
+        currentStartDelay= #{currentStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="currentResumeDelay != null">
+        currentResumeDelay= #{currentResumeDelay,jdbcType=INTEGER},
+      </if>
+
+
+      <if test="electricityRemind != null">
+        electricityRemind = #{electricityRemind,jdbcType=INTEGER},
+      </if>
+      <if test="lowerLimitQuantity != null">
+        lowerLimitQuantity = #{lowerLimitQuantity,jdbcType=REAL},
+      </if>
+
+      <if test="temperatureRemind != null">
+        temperatureRemind = #{temperatureRemind,jdbcType=INTEGER},
+      </if>
+      <if test="temperatureAmplitude != null">
+        temperatureAmplitude = #{temperatureAmplitude,jdbcType=REAL},
+      </if>
+
+      <if test="temperatureStartDelay != null">
+        temperatureStartDelay= #{temperatureStartDelay,jdbcType=INTEGER},
+      </if>
+      <if test="temperatureResumeDelay != null">
+        temperatureResumeDelay= #{temperatureResumeDelay,jdbcType=INTEGER},
+      </if>
+
+      <if test="poorContactRemind != null">
+        poorContactRemind= #{poorContactRemind,jdbcType=INTEGER},
+      </if>
+      <if test="poorContact != null">
+        poorContact= #{poorContact,jdbcType=INTEGER},
+      </if>
+
+    </set>
+    where pduID = #{pduid,jdbcType=INTEGER}
+  </update>
+</mapper>

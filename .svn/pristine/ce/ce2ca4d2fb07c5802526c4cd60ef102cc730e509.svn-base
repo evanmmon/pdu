@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduClockMapper">
+    <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduClock">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="sceneID" jdbcType="INTEGER" property="sceneid"/>
+        <result column="pduID" jdbcType="INTEGER" property="pduid"/>
+        <result column="action" jdbcType="VARCHAR" property="action"/>
+        <result column="actionTime" jdbcType="VARCHAR" property="actiontime"/>
+        <result column="resultState" jdbcType="VARCHAR" property="resultstate"/>
+        <result column="mode" jdbcType="VARCHAR" property="mode"/>
+        <result column="repeatday" jdbcType="VARCHAR" property="repeatday"/>
+        <result column="clockdate" jdbcType="VARCHAR" property="clockdate"/>
+        <result column="clocktime" jdbcType="VARCHAR" property="clocktime"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, sceneID, pduID, action, actionTime, resultState
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu_clock
+        where ID = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_pdu_clock
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduClock">
+    insert into tb_pdu_clock (ID, sceneID, pduID, 
+      action, actionTime, resultState,mode,repeatday,clockdate,clocktime
+      )
+    values (#{id,jdbcType=INTEGER}, #{sceneid,jdbcType=INTEGER}, #{pduid,jdbcType=INTEGER}, 
+      #{action,jdbcType=VARCHAR}, #{actiontime,jdbcType=VARCHAR}, #{resultstate,jdbcType=VARCHAR},
+      #{mode,jdbcType=VARCHAR},#{repeatday,jdbcType=VARCHAR},#{clockdate,jdbcType=VARCHAR},#{clocktime,jdbcType=VARCHAR}
+      )
+  </insert>
+
+
+
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduClock">
+    <!--主键返回-->
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_pdu_clock
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="sceneid != null">
+        sceneID,
+      </if>
+      <if test="pduid != null">
+        pduID,
+      </if>
+      <if test="action != null">
+        action,
+      </if>
+      <if test="actiontime != null">
+        actionTime,
+      </if>
+      <if test="resultstate != null">
+        resultState,
+      </if>
+      <if test="mode != null">
+        mode,
+      </if>
+      <if test="repeatday != null">
+        repeatday,
+      </if>
+      <if test="clockdate != null">
+        clockdate,
+      </if>
+      <if test="clocktime != null">
+        clocktime,
+      </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="sceneid != null">
+                #{sceneid,jdbcType=INTEGER},
+            </if>
+            <if test="pduid != null">
+                #{pduid,jdbcType=INTEGER},
+            </if>
+            <if test="action != null">
+                #{action,jdbcType=VARCHAR},
+            </if>
+            <if test="actiontime != null">
+                #{actiontime,jdbcType=VARCHAR},
+            </if>
+            <if test="resultstate != null">
+                #{resultstate,jdbcType=VARCHAR},
+            </if>
+            <if test="mode != null">
+                #{mode,jdbcType=VARCHAR},
+            </if>
+            <if test="repeatday != null">
+                #{repeatday,jdbcType=VARCHAR},
+            </if>
+            <if test="clockdate != null">
+                #{clockdate,jdbcType=VARCHAR},
+            </if>
+            <if test="clocktime != null">
+                #{clocktime,jdbcType=VARCHAR},
+            </if>
+
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.PduClock">
+        update tb_pdu_clock
+        <set>
+            <if test="sceneid != null">
+                sceneID = #{sceneid,jdbcType=INTEGER},
+            </if>
+            <if test="pduid != null">
+                pduID = #{pduid,jdbcType=INTEGER},
+            </if>
+            <if test="action != null">
+                action = #{action,jdbcType=VARCHAR},
+            </if>
+            <if test="actiontime != null">
+                actionTime = #{actiontime,jdbcType=VARCHAR},
+            </if>
+            <if test="resultstate != null">
+                resultState = #{resultstate,jdbcType=VARCHAR},
+            </if>
+            <if test="mode != null">
+                mode = #{mode,jdbcType=VARCHAR},
+            </if>
+            <if test="repeatday != null">
+                repeatday = #{repeatday,jdbcType=VARCHAR},
+            </if>
+            <if test="clockdate != null">
+                clockdate = #{clockdate,jdbcType=VARCHAR},
+            </if>
+            <if test="clocktime != null">
+                clocktime = #{clocktime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduClock">
+    update tb_pdu_clock
+    set sceneID = #{sceneid,jdbcType=INTEGER},
+      pduID = #{pduid,jdbcType=INTEGER},
+      action = #{action,jdbcType=VARCHAR},
+      actionTime = #{actiontime,jdbcType=VARCHAR},
+      resultState = #{resultstate,jdbcType=VARCHAR},
+      mode = #{mode,jdbcType=VARCHAR},
+      repeatday = #{repeatday,jdbcType=VARCHAR},
+      clockdate = #{clockdate,jdbcType=VARCHAR},
+      clocktime = #{clocktime,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu_clock
+    </select>
+
+    <select id="selectPduClockByPduId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from tb_pdu_clock
+    where pduID = #{pduid,jdbcType=INTEGER}
+  </select>
+
+
+    <select id="selectPduClockTask" parameterType="com.chuangkou.pdu.entity.PduClock" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from tb_pdu_clock
+        where pduID = #{pduid,jdbcType=INTEGER} AND
+          clockdate = #{clockdate,jdbcType=VARCHAR} AND
+          clocktime = #{clocktime,jdbcType=VARCHAR} AND resultState = '1'
+  </select>
+</mapper>

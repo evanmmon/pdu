@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.Role">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userName" jdbcType="VARCHAR" property="username" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, userName, role_name
+  </sql>
+
+
+
+
+  <select id="selectOne" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  SELECT * from user_roles where ID = #{id}
+</select>
+
+  <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT * from user_roles where userName = #{username}
+  </select>
+  <select id="selectall" resultMap="BaseResultMap">
+    SELECT * FROM user_roles
+  </select>
+
+  <!--<delete id="deleteById" parameterType="java.lang.Integer">-->
+    <!--delete from tb_role-->
+    <!--where ID = #{id}-->
+  <!--</delete>-->
+
+
+  <update id="update" parameterType="com.chuangkou.pdu.entity.Role">
+    update user_roles set role_name = #{roleName,jdbcType=VARCHAR} where  userName = #{username,jdbcType=VARCHAR}
+  </update>
+
+  <insert id="saveRole" parameterType="com.chuangkou.pdu.entity.Role">
+    insert into user_roles
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        userName,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
+    <!--select -->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from tb_role-->
+    <!--where ID = #{id,jdbcType=INTEGER}-->
+  <!--</select>-->
+  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">-->
+    <!--delete from tb_role-->
+    <!--where ID = #{id,jdbcType=INTEGER}-->
+  <!--</delete>-->
+  <!--<insert id="insert" parameterType="com.chuangkou.pdu.entity.Role">-->
+    <!--insert into tb_role (ID, roleName, detailed, -->
+      <!--remark)-->
+    <!--values (#{id,jdbcType=INTEGER}, #{rolename,jdbcType=VARCHAR}, #{detailed,jdbcType=VARCHAR}, -->
+      <!--#{remark,jdbcType=VARCHAR})-->
+  <!--</insert>-->
+
+
+  <!--<update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.Role">-->
+    <!--update tb_role-->
+    <!--set roleName = #{rolename,jdbcType=VARCHAR},-->
+      <!--detailed = #{detailed,jdbcType=VARCHAR},-->
+      <!--remark = #{remark,jdbcType=VARCHAR}-->
+    <!--where ID = #{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+</mapper>

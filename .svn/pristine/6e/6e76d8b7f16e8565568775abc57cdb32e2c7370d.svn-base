@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduSelfcheckInfoMapper">
+
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduSelfcheckInfo">
+    <result column="selfcheckID" jdbcType="INTEGER" property="selfcheckid" />
+    <result column="pduID" jdbcType="INTEGER" property="pduid" />
+    <result column="collectionTime" jdbcType="VARCHAR" property="collectiontime" />
+    <result column="voltage" jdbcType="VARCHAR" property="voltage" />
+    <result column="current" jdbcType="VARCHAR" property="current" />
+    <result column="watt" jdbcType="VARCHAR" property="watt" />
+    <result column="relayState" jdbcType="VARCHAR" property="relaystate" />
+    <result column="overvoltage" jdbcType="VARCHAR" property="overvoltage" />
+    <result column="undervoltage" jdbcType="VARCHAR" property="undervoltage" />
+    <result column="overcurrent" jdbcType="VARCHAR" property="overcurrent" />
+    <result column="circuitbreaker" jdbcType="VARCHAR" property="circuitbreaker" />
+    <result column="electricleakage" jdbcType="VARCHAR" property="electricleakage" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+  </resultMap>
+
+  <select id="selectall" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT * FROM tb_pdu_selfcheck_info WHERE selfcheckID=#{id}
+  </select>
+
+  <insert id="savePduSelfcheckInfo"  parameterType="com.chuangkou.pdu.entity.PduSelfcheckInfo">
+    insert into tb_pdu_selfcheck_info(selfcheckID,pduID,collectionTime)
+    values (#{selfcheckid},#{pduid},#{collectiontime})
+  </insert>
+
+  <select id="selectPduIdBySelfcheckId" resultMap="BaseResultMap">
+    SELECT  pduID FROM tb_pdu_selfcheck_info where selfcheckID=#{id}
+ </select>
+</mapper>

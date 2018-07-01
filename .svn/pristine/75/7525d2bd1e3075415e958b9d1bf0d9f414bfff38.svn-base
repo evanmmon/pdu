@@ -1,0 +1,488 @@
+package com.chuangkou.pdu.thread;
+
+import com.chuangkou.pdu.controller.BaseController;
+import com.chuangkou.pdu.entity.MessageDLT;
+import com.chuangkou.pdu.entity.Pdu;
+import com.chuangkou.pdu.entity.PduRelation;
+import com.chuangkou.pdu.service.PduRelationService;
+import com.chuangkou.pdu.service.PduService;
+import com.chuangkou.pdu.util.MessageStringDLTUtils;
+import com.chuangkou.pdu.util.SocketUtils;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Author:
+ * @Description:
+ * @Date:Created in 17:49 2018/6/13
+ */
+public class JobPduInternetInfoThread implements Runnable {
+
+
+    private static PduService pduService = (PduService) SpringApplicationContextHolder.getSpringBean("pduService");
+
+    private static PduRelationService pduRelationService = (PduRelationService) SpringApplicationContextHolder.getSpringBean("pduRelationService");
+
+
+    List<Pdu> pduListBreaker = new ArrayList<Pdu>();
+
+    public JobPduInternetInfoThread(List<Pdu> pduListBreaker) {
+        this.pduListBreaker = pduListBreaker;
+        run();
+    }
+
+    /**
+    @Override
+    public void run() {
+
+        try {
+            for (int i = 0; i < pduListBreaker.size(); i++) {
+                Pdu pduBreakerTwo = new Pdu();
+                pduBreakerTwo = pduListBreaker.get(i);//空开信息
+
+                //获取空开关联的插座
+                List<PduRelation> pduRelationsList = new ArrayList<PduRelation>();
+                pduRelationsList = pduRelationService.selectByPlugs(pduBreakerTwo.getId());
+
+                //遍历空开关联的插座
+                for (int x = 0; x < pduRelationsList.size(); x++) {
+                    PduRelation pduRelation = new PduRelation();
+                    pduRelation = pduRelationsList.get(x);
+
+                    int oneId = pduRelation.getPduID();
+                    Pdu onePduinfo = pduService.selectByPrimaryKey(oneId);
+
+                    System.out.println("one的ID===" + onePduinfo.getMachineid());
+
+                    String oneConName = onePduinfo.getIp();
+                    Socket onePduinfoCon = null;
+                    //获取连接对象
+                    onePduinfoCon = (Socket) BaseController.SubPolmap.get(oneConName);
+
+                    Thread.sleep(3000);
+                    //获取插座的IN值
+                    String oneStartPduCurrent = "0";
+                    oneStartPduCurrent = pduPlugCurrent(onePduinfo, onePduinfoCon, "in");
+                    System.out.println("当前插座one电流in==" + oneStartPduCurrent);
+
+                    //获取插座的out值
+//                    String oneStartPduCurrentOut = "0";
+//                    oneStartPduCurrentOut = pduPlugCurrent(onePduinfo, onePduinfoCon, "out");
+//                    System.out.println("当前插座one电流out==" + oneStartPduCurrentOut);
+
+//                    int num = 0;
+                    for (int y = 0; y < pduRelationsList.size(); y++) {
+                        Thread.sleep(10000);
+                        PduRelation pduRelationTwo = new PduRelation();
+                        pduRelationTwo = pduRelationsList.get(y);
+
+
+                        int twoId = pduRelationTwo.getPduID();
+                        Pdu twoPduinfo = pduService.selectByPrimaryKey(twoId);
+
+                        System.out.println("22222222222222222222twoPduinfo===" + twoPduinfo.getMachineid());
+
+                        if (!twoPduinfo.getMachineid().equals(onePduinfo.getMachineid())) {
+
+                            String twoConName = twoPduinfo.getIp();
+                            Socket twoPduinfoCon = null;
+                            //获取连接对象
+                            twoPduinfoCon = (Socket) BaseController.SubPolmap.get(twoConName);
+
+                            //获取插座的IN值
+                            String twoStartPduCurrent = "0";
+                            twoStartPduCurrent = pduPlugCurrent(twoPduinfo, twoPduinfoCon, "in");
+                            System.out.println("当前插座two电流in==" + twoStartPduCurrent);
+
+                            //获取插座的OUT值
+//                            String twoStartPduCurrentOut = "0";
+//                            twoStartPduCurrentOut = pduPlugCurrent(twoPduinfo, twoPduinfoCon, "out");
+//                            System.out.println("当前插座two电流out==" + twoStartPduCurrentOut);
+
+                            long starttime = System.currentTimeMillis();
+                            System.out.println("开启时间==" + System.currentTimeMillis());
+
+                            //开启one
+                            Thread.sleep(100);
+//                            Thread oneThreadPlug = new Thread(new PduActionThread(onePduinfoCon, onePduinfo, "1"));
+                            Thread oneThreadPlug = new Thread(new PduActionThreadPDC(onePduinfoCon, onePduinfo, "1"));
+                            oneThreadPlug.start();
+                            oneThreadPlug.join();
+                            //                        onePduinfo.setActionState("1");
+                            //                        pduService.update(onePduinfo);
+                            System.out.println("已开启插座one设备" + onePduinfo.getMachineid());
+
+
+                            //开启two
+                            Thread.sleep(100);
+//                            Thread twoThreadPlug = new Thread(new PduActionThread(twoPduinfoCon, twoPduinfo, "1"));
+                            Thread twoThreadPlug = new Thread(new PduActionThreadPDC(twoPduinfoCon, twoPduinfo, "1"));
+                            twoThreadPlug.start();
+                            twoThreadPlug.join();
+                            //                        twoPduinfo.setActionState("1");
+                            //                        pduService.update(twoPduinfo);
+                            System.out.println("已开启插座Two设备" + twoPduinfo.getMachineid());
+
+
+                           Thread.sleep(10000);
+
+                            //再次获取one的电流
+                            String oneEndPduCurrent = "0";
+//                            Thread.sleep(500);
+                            oneEndPduCurrent = pduPlugCurrent(onePduinfo, onePduinfoCon, "in");
+                            System.out.println("插座one " + onePduinfo.getMachineid() + " 开启后的电流in==" + oneEndPduCurrent);
+
+
+                            //获取插座的out值
+//                            String oneEndPduCurrentOut = "0";
+////                            Thread.sleep(500);
+//                            oneEndPduCurrentOut = pduPlugCurrent(onePduinfo, onePduinfoCon, "out");
+//                            System.out.println("插座one "+ onePduinfo.getMachineid() +" 开启后的电流out==" + oneEndPduCurrentOut);
+
+                            //再次获取two的电流in
+                            String twoEndPduCurrent = "0";
+//                            Thread.sleep(500);
+                            twoEndPduCurrent = pduPlugCurrent(twoPduinfo, twoPduinfoCon, "in");
+                            System.out.println("插座two " + twoPduinfo.getMachineid() + " 开启后的电流==" + twoEndPduCurrent);
+
+                            //再次获取two的电流out
+//                            String twoEndPduCurrentOut = "0";
+////                            Thread.sleep(500);
+//                            twoEndPduCurrentOut = pduPlugCurrent(twoPduinfo, twoPduinfoCon, "out");
+//                            System.out.println("插座two "+ twoPduinfo.getMachineid() +" 开启后的电流out==" + twoEndPduCurrentOut);
+
+                            //关闭one、two
+                            Thread.sleep(100);
+//                            oneThreadPlug = new Thread(new PduActionThread(onePduinfoCon, onePduinfo, "0"));
+                            oneThreadPlug = new Thread(new PduActionThreadPDC(onePduinfoCon, onePduinfo, "0"));
+                            oneThreadPlug.start();
+                            oneThreadPlug.join();
+                            //                        onePduinfo.setActionState("0");
+                            //                        pduService.update(onePduinfo);
+                            System.out.println("关闭插座one设备" + onePduinfo.getMachineid());
+
+                            Thread.sleep(100);
+//                            twoThreadPlug = new Thread(new PduActionThread(twoPduinfoCon, twoPduinfo, "0"));
+                            twoThreadPlug = new Thread(new PduActionThreadPDC(twoPduinfoCon, twoPduinfo, "0"));
+                            twoThreadPlug.start();
+                            twoThreadPlug.join();
+                            //                        twoPduinfo.setActionState("1");
+                            //                        pduService.update(twoPduinfo);
+                            System.out.println("关闭插座two设备" + twoPduinfo.getMachineid());
+
+                            System.out.println("结束时间==" + Long.valueOf(System.currentTimeMillis() - starttime));
+
+                            //比较值进行匹配 公式匹配 IN1 = OUT1+IN2  记录插座之间的关系
+
+                            float oneStartPduCurrentFloat = Float.parseFloat(oneStartPduCurrent);
+//                            float oneStartPduCurrentOutFloat = Float.parseFloat(oneStartPduCurrentOut);
+                            float oneEndPduCurrentFloat = Float.parseFloat(oneEndPduCurrent);
+//                            float oneEndPduCurrentOutFloat = Float.parseFloat(oneEndPduCurrentOut);
+                            System.out.println(onePduinfo.getMachineid() + "初始 in===" + oneStartPduCurrentFloat);
+//                            System.out.println(onePduinfo.getMachineid() + "初始 out===" + oneStartPduCurrentOutFloat);
+                            System.out.println(onePduinfo.getMachineid() + "加载后 in===" + oneEndPduCurrentFloat);
+//                            System.out.println(onePduinfo.getMachineid() + "加载后 out===" + oneEndPduCurrentOutFloat);
+
+
+                            float twoStartPduCurrentFloat = Float.parseFloat(twoStartPduCurrent);
+//                            float twoStartPduCurrentOutFloat = Float.parseFloat(twoStartPduCurrentOut);
+                            float twoEndPduCurrentFloat = Float.parseFloat(twoEndPduCurrent);
+//                            float twoEndPduCurrentOutFloat = Float.parseFloat(twoEndPduCurrentOut);
+                            System.out.println(twoPduinfo.getMachineid() + "初始 in===" + twoStartPduCurrentFloat);
+//                            System.out.println(twoPduinfo.getMachineid() + "初始 out===" + twoStartPduCurrentOutFloat);
+                            System.out.println(twoPduinfo.getMachineid() + "加载后 in===" + twoEndPduCurrentFloat);
+//                            System.out.println(twoPduinfo.getMachineid() + "加载后 out===" + twoEndPduCurrentOutFloat);
+
+
+//                            float differenceTwoPduCurrent = twoEndPduCurrentFloat - twoStartPduCurrentFloat;
+//                            System.out.println("插座two开启前后的差值===" + differenceTwoPduCurrent);
+
+                            if (Math.abs(oneEndPduCurrentFloat - twoEndPduCurrentFloat) < 0.1) {
+                                System.out.println(onePduinfo.getMachineid() + "与" + twoPduinfo.getMachineid() + "是同级关系");
+                                System.out.println("**************************************************************");
+
+                            } else {
+
+                                float s = 0;
+                                if (oneEndPduCurrentFloat > twoEndPduCurrentFloat) {
+                                    s = oneEndPduCurrentFloat - twoEndPduCurrentFloat;
+                                    float ds = s * 2;
+
+                                    if (Math.abs(ds - oneEndPduCurrentFloat) < 0.1) {
+                                        System.out.println(onePduinfo.getMachineid() + "是" + twoPduinfo.getMachineid() + "的上级");
+                                    }
+
+                                } else {
+
+                                    s = twoEndPduCurrentFloat - oneEndPduCurrentFloat;
+                                    float ds = s * 2;
+                                    if (Math.abs(ds - twoEndPduCurrentFloat) < 0.1) {
+                                        System.out.println(twoPduinfo.getMachineid() + "是" + onePduinfo.getMachineid() + "的上级");
+                                    }else {
+
+                                        System.out.println("数据误差太大==========================================");
+                                    }
+                                }
+                            }
+
+
+                             if (differenceTwoPduCurrent > 0) {
+                             float inOne = oneEndPduCurrentOutFloat + twoEndPduCurrentFloat;
+                             System.out.println("公式out1 + in2===" + inOne);
+                             float difference = Math.abs(inOne - oneEndPduCurrentFloat);
+                             System.out.println("公式误差==" + difference);
+                             if (difference < 0.1) {
+                             //如果差值与插座差值相同，则保存空开与插座的关系
+                             PduRelation pduRelationEnd = new PduRelation();
+                             pduRelation.setPduID(twoPduinfo.getId());
+                             pduRelation.setParent_id(String.valueOf(onePduinfo.getId()));
+                             System.out.println("记录插座与插座关系");
+
+                             PduRelation pduRelationGet = new PduRelation();
+                             pduRelationGet = pduRelationService.selectByPrimaryKey(twoPduinfo.getId());
+
+                             if (pduRelationGet == null) {
+
+                             pduRelationService.insert(pduRelation);
+
+                             } else {
+                             pduRelationService.updateByPrimaryKeySelective(pduRelation);
+                             }
+                             System.out.println(onePduinfo.getMachineid() + "与" + twoPduinfo.getMachineid() + "判定存在级联关系");
+                             System.out.println("匹配合适的插座$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + pduRelation.getPduID());
+                             break;
+                             } else {
+
+                             System.out.println(onePduinfo.getMachineid() + "与" + twoPduinfo.getMachineid() + "判定没有级联关系");
+                             System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" + +pduRelation.getPduID());
+                             }
+
+                             }
+                        }
+                    }
+                }
+
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+****/
+    @Override
+    public void run() {
+
+
+        try {
+            for (int i = 0; i < pduListBreaker.size(); i++) {
+                Pdu pduBreakerTwo = new Pdu();
+                pduBreakerTwo = pduListBreaker.get(i);//空开信息
+
+                //获取空开关联的插座
+                List<PduRelation> pduRelationsList = new ArrayList<PduRelation>();
+                pduRelationsList = pduRelationService.selectByPlugs(pduBreakerTwo.getId());
+
+
+                for (int x = 0; x < pduRelationsList.size(); x++) {
+                    PduRelation pduRelation = new PduRelation();
+                    pduRelation = pduRelationsList.get(x);
+
+                    int oneId = pduRelation.getPduID();
+                    Pdu onePduinfo = pduService.selectByPrimaryKey(oneId);
+
+                    System.out.println("one的ID===" + onePduinfo.getMachineid());
+
+                    String oneConName = onePduinfo.getIp();
+                    Socket onePduinfoCon = null;
+                    //获取连接对象
+                    onePduinfoCon = (Socket) BaseController.SubPolmap.get(oneConName);
+
+                    Thread.sleep(3000);
+                    //获取插座的IN值
+                    String oneStartPduCurrent = "0";
+                    oneStartPduCurrent = pduPlugCurrent(onePduinfo, onePduinfoCon, "in");
+                    System.out.println("当前插座1电流in==" + oneStartPduCurrent);
+
+                    for (int y = 0; y < pduRelationsList.size(); y++) {
+                        Thread.sleep(10000);
+                        PduRelation pduRelationTwo = new PduRelation();
+                        pduRelationTwo = pduRelationsList.get(y);
+
+                        int twoId = pduRelationTwo.getPduID();
+                        Pdu twoPduinfo = pduService.selectByPrimaryKey(twoId);
+
+                        if (!twoPduinfo.getMachineid().equals(onePduinfo.getMachineid())) {
+                            String twoConName = twoPduinfo.getIp();
+                            Socket twoPduinfoCon = null;
+                            //获取连接对象
+                            twoPduinfoCon = (Socket) BaseController.SubPolmap.get(twoConName);
+
+                            //取得插座2当前电流
+                            String twoStartPduCurrent = "0";
+                            twoStartPduCurrent = pduPlugCurrent(twoPduinfo, twoPduinfoCon, "in");
+                            System.out.println("当前插座2电流==" + twoStartPduCurrent);
+
+                            //开启插座1
+                            Thread.sleep(100);
+                            Thread oneThreadPlug = new Thread(new PduActionThreadPDC(onePduinfoCon, onePduinfo, "1"));
+                            oneThreadPlug.start();
+                            oneThreadPlug.join();
+                            System.out.println("开启插座。。。。。。。。。。。。");
+
+
+                            //开启插座1后 插座2的电流变化
+                            //再次获取one的电流
+                            String oneEndPduCurrent = "0";
+//                            Thread.sleep(500);
+                            oneEndPduCurrent = pduPlugCurrent(onePduinfo, onePduinfoCon, "in");
+                            System.out.println("插座one " + onePduinfo.getMachineid() + " 开启后的电流in==" + oneEndPduCurrent);
+
+                            //再次获取two的电流in
+                            String twoEndPduCurrent = "0";
+//                            Thread.sleep(500);
+                            twoEndPduCurrent = pduPlugCurrent(twoPduinfo, twoPduinfoCon, "in");
+                            System.out.println("插座two " + twoPduinfo.getMachineid() + " 开启后的电流==" + twoEndPduCurrent);
+
+                            //关闭插座1
+                            Thread.sleep(100);
+                            oneThreadPlug = new Thread(new PduActionThreadPDC(onePduinfoCon, onePduinfo, "0"));
+                            oneThreadPlug.start();
+                            oneThreadPlug.join();
+
+
+                            float oneStartPduCurrentFloat = Float.parseFloat(oneStartPduCurrent);
+                            float oneEndPduCurrentFloat = Float.parseFloat(oneEndPduCurrent) - oneStartPduCurrentFloat;
+                            System.out.println(onePduinfo.getMachineid() + "初始 in===" + oneStartPduCurrentFloat);
+                            System.out.println(onePduinfo.getMachineid() + "加载后 in===" + oneEndPduCurrentFloat);
+
+
+                            float twoStartPduCurrentFloat = Float.parseFloat(twoStartPduCurrent);
+                            float twoEndPduCurrentFloat = Float.parseFloat(twoEndPduCurrent) - twoStartPduCurrentFloat;
+                            System.out.println(twoPduinfo.getMachineid() + "初始 in===" + twoStartPduCurrentFloat);
+                            System.out.println(twoPduinfo.getMachineid() + "加载后 in===" + twoEndPduCurrentFloat);
+
+                            float differenceTwoPduCurrent = twoEndPduCurrentFloat - twoStartPduCurrentFloat;
+                            System.out.println("插座two开启前后的差值===" + differenceTwoPduCurrent);
+
+
+                            if (differenceTwoPduCurrent > 0) {
+
+                                float difference = Math.abs(oneEndPduCurrentFloat - twoStartPduCurrentFloat);
+                                System.out.println("公式误差==" + difference);
+                                //如果差值误差小于0.1 表示插座2是插座1的上级
+                                if (difference < 0.1) {
+
+                                    PduRelation pduRelationGet = new PduRelation();
+                                    pduRelationGet = pduRelationService.selectByPrimaryKey(twoPduinfo.getId());
+
+                                    if (pduRelationGet == null) {
+
+                                        PduRelation pduRelationEnd = new PduRelation();
+                                        pduRelation.setPduID(twoPduinfo.getId());
+                                        pduRelation.setParent_id(String.valueOf(onePduinfo.getId()));
+                                        System.out.println("记录插座与插座关系");
+
+                                        pduRelationService.insert(pduRelation);
+
+                                    } else {
+                                        PduRelation pduRelationEnd = new PduRelation();
+                                        pduRelation.setPduID(twoPduinfo.getId());
+                                        String parent_ids =  pduRelationGet.getParent_id() + "," +  String.valueOf(onePduinfo.getId());
+                                        pduRelation.setParent_id(parent_ids);
+                                        System.out.println("记录插座与插座关系");
+
+                                        pduRelationService.updateByPrimaryKeySelective(pduRelation);
+                                    }
+                                    System.out.println(onePduinfo.getMachineid() + "与" + twoPduinfo.getMachineid() + "判定存在级联关系");
+                                    System.out.println("匹配合适的插座$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + pduRelation.getPduID());
+                                    break;
+                                } else {
+
+                                    System.out.println(onePduinfo.getMachineid() + "与" + twoPduinfo.getMachineid() + "判定没有级联关系");
+                                    System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" + +pduRelation.getPduID());
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     * @Author:
+     * @Description:获取插座电流
+     * @Date:
+     */
+
+    public static String pduPlugCurrent(Pdu pdu, Socket socket, String action) {
+
+        String startPduCurrent = "";
+        String end = "";
+        int num = 0;
+        try {
+//            startPduCurrent = "0";
+            //获取当前设备的电流
+            MessageDLT messageDLTPlugStart = new MessageDLT();
+            messageDLTPlugStart.setMachineAddress(pdu.getMachineid());
+            if (action.equals("in")) {
+                messageDLTPlugStart.setDataStr("06FF0500");
+            }
+            if (action.equals("out")) {
+                messageDLTPlugStart.setDataStr("02020100");
+            }
+            //拼接报文
+            String startCurrentSendMesg = MessageStringDLTUtils.messageToHex(messageDLTPlugStart, "read");
+
+            if (pdu.getType().equals("0001")) {
+                end = "0D0A";
+            }
+            String startCurrentReadMesgPlug = "";
+
+            while (startPduCurrent.equals("")) {
+                System.out.println("发送电流报文==" + startCurrentSendMesg + end);
+                System.out.println("socket IP = " + socket.getInetAddress().toString());
+                SocketUtils.writeMsgToClient(socket.getOutputStream(), startCurrentSendMesg + end);//发送报文
+
+                Thread.sleep(2000);
+//                startCurrentReadMesgPlug = SocketUtils.readMessageFromClient(socket.getInputStream());//收到回复
+                startCurrentReadMesgPlug = BaseController.readmsg;
+
+                System.out.println("电流返回报文==" + startCurrentReadMesgPlug);
+                if (startCurrentReadMesgPlug != null && !startCurrentReadMesgPlug.equals("")) {
+                    if (startCurrentReadMesgPlug.substring(0, 8).equals("FEFEFEFE")) {
+                        //解析报文 获取设备当前电流值
+                        String current = MessageStringDLTUtils.receiveMessageToDate(startCurrentReadMesgPlug, messageDLTPlugStart);
+                        System.out.println("电流值===" + current);
+                        if (!current.equals("")) {
+                            float currentF = Float.parseFloat(current);
+                            currentF = (float) Math.round(currentF) / 1000;
+                            if (currentF >= 0) {
+                                startPduCurrent = String.valueOf(currentF);//获取电流
+                            }
+                        }
+                    }
+                }
+                num++;
+                if (num == 3) {
+                    startPduCurrent = "0";
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return startPduCurrent;
+    }
+}

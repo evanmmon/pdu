@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduOldLineMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduOldLine">
+    <id column="ID" jdbcType="INTEGER" property="id"/>
+    <result column="pduID" jdbcType="INTEGER" property="pduID"/>
+    <result column="collectionTime" jdbcType="VARCHAR" property="collectiontime"/>
+    <result column="resistance" jdbcType="VARCHAR" property="resistance" />
+
+    <result column="starttime" jdbcType="VARCHAR" property="starttime"/>
+    <result column="endtime" jdbcType="VARCHAR" property="endtime"/>
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    ID, pduID, collectionTime, resistance
+  </sql>
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_pdu_oldline
+    where pduID = #{pduID,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduOldLine">
+    insert into tb_pdu_oldline (pduID, collectionTime, resistance
+      )
+    values (#{pduID,jdbcType=INTEGER}, #{collectionTime,jdbcType=VARCHAR},#{resistance,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduOldLine">
+    insert into tb_pdu_oldline
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pduID != null">
+        pduID,
+      </if>
+      <if test="collectionTime != null">
+        collectionTime,
+      </if>
+      <if test="resistance != null">
+        resistance,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pduID != null">
+        pduID,
+      </if>
+      <if test="collectionTime != null">
+        collectionTime,
+      </if>
+      <if test="resistance != null">
+        resistance,
+      </if>
+
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduOldLine">
+
+    update tb_pdu_oldline
+    set pduID = #{pduID,jdbcType=INTEGER},
+      collectionTime = #{collectionTime,jdbcType=VARCHAR},
+      resistance = #{resistance,jdbcType=VARCHAR}
+    where pduID = #{pduID,jdbcType=INTEGER}
+
+  </update>
+
+  <select id="selectAllByHistoryData" parameterType="com.chuangkou.pdu.entity.PduOldLine" resultMap="BaseResultMap">
+    select
+    DATE_FORMAT(collectionTime,'%Y-%m-%d')as collectionTime ,
+    TRUNCATE(avg(resistance),1) as resistance
+    from tb_pdu_oldline
+    where pduID = #{pduID,jdbcType=INTEGER}
+    AND DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss') &gt; #{starttime,jdbcType=VARCHAR}
+    AND DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss') &lt; #{endtime,jdbcType=VARCHAR}
+    GROUP BY DATE_FORMAT(collectionTime,'%Y-%m-%d')
+
+  </select>
+
+  <select id="selectAllByHistoryHours" parameterType="com.chuangkou.pdu.entity.PduOldLine" resultMap="BaseResultMap">
+    select
+    DATE_FORMAT(collectionTime,'%Y-%m-%d %H:00:00') as collectionTime ,
+    TRUNCATE(avg(resistance),1) as resistance
+    from tb_pdu_oldline
+    where
+    pduID = #{pduID,jdbcType=INTEGER}
+    and DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss')  &gt; #{starttime,jdbcType=VARCHAR}
+    and DATE_FORMAT(collectionTime,'%Y-%m-%d %h:%mm:%ss') &lt; #{endtime,jdbcType=VARCHAR}
+    GROUP BY DATE_FORMAT(collectionTime,'%Y-%m-%d %H:00:00')
+  </select>
+
+</mapper>

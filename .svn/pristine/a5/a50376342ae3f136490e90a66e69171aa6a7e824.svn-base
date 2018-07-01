@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PduMapper">
+    <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.Pdu">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="machineID" jdbcType="VARCHAR" property="machineid"/>
+        <result column="QRcode" jdbcType="VARCHAR" property="qrcode"/>
+        <result column="parentID" jdbcType="VARCHAR" property="parentid"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="onlinestate" jdbcType="VARCHAR" property="onlinestate"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="createTime" jdbcType="VARCHAR" property="createTime"/>
+        <result column="updateTime" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="actionState" jdbcType="VARCHAR" property="actionState"/>
+        <result column="powerType" jdbcType="VARCHAR" property="powerType"/>
+        <result column="electronictages1" jdbcType="VARCHAR" property="electronictages1"/>
+        <result column="electronictages2" jdbcType="VARCHAR" property="electronictages2"/>
+        <result column="electronictages3" jdbcType="VARCHAR" property="electronictages3"/>
+        <result column="electronictages4" jdbcType="VARCHAR" property="electronictages4"/>
+        <result column="electronictages5" jdbcType="VARCHAR" property="electronictages5"/>
+        <result column="electronictages6" jdbcType="VARCHAR" property="electronictages6"/>
+        <association property="rolePduRelation" javaType="com.chuangkou.pdu.entity.RolePduRelation">
+            <result column="roleID" jdbcType="INTEGER" property="roleid"/>
+            <result column="mpermissionsID" jdbcType="INTEGER" property="mpermissionsid"/>
+            <result column="ifview" jdbcType="VARCHAR" property="ifview"/>
+            <result column="ifcontrol" jdbcType="VARCHAR" property="ifcontrol"/>
+        </association>
+
+        <association property="mpermissions" javaType="com.chuangkou.pdu.entity.Mpermissions">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+            <result column="permission" jdbcType="VARCHAR" property="permission"/>
+        </association>
+        <!--<association property="pdugroup" javaType="com.chuangkou.pdu.entity.PduGroup">-->
+        <!--<id column="ID" jdbcType="INTEGER" property="id" />-->
+        <!--<result column="groupName" jdbcType="VARCHAR" property="groupname" />-->
+        <!--<result column="remark" jdbcType="VARCHAR" property="remark" />-->
+        <!--</association>-->
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.chuangkou.pdu.entity.PduInfoTemp">
+        <id column="pduid" jdbcType="INTEGER" property="pduid"/>
+        <result column="pdutype" jdbcType="VARCHAR" property="pdutype"/>
+        <result column="machineid" jdbcType="VARCHAR" property="machineid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="onlinestate" jdbcType="VARCHAR" property="onlinestate"/>
+        <result column="updateTime" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="voltage" jdbcType="VARCHAR" property="voltage"/>
+        <result column="current" jdbcType="VARCHAR" property="current"/>
+        <result column="watt" jdbcType="VARCHAR" property="watt"/>
+        <result column="relaystate" jdbcType="VARCHAR" property="relaystate"/>
+        <result column="overvoltage" jdbcType="VARCHAR" property="overvoltage"/>
+        <result column="undervoltage" jdbcType="VARCHAR" property="undervoltage"/>
+        <result column="overcurrent" jdbcType="VARCHAR" property="overcurrent"/>
+        <result column="circuitbreaker" jdbcType="VARCHAR" property="circuitbreaker"/>
+        <result column="electricleakage" jdbcType="VARCHAR" property="electricleakage"/>
+        <result column="pdugroupid" jdbcType="VARCHAR" property="pdugroupid"/>
+        <result column="groupname" jdbcType="VARCHAR" property="groupname"/>
+        <result column="electronictages1" jdbcType="VARCHAR" property="electronictages1"/>
+        <result column="electronictages2" jdbcType="VARCHAR" property="electronictages2"/>
+        <result column="electronictages3" jdbcType="VARCHAR" property="electronictages3"/>
+        <result column="electronictages4" jdbcType="VARCHAR" property="electronictages4"/>
+        <result column="electronictages5" jdbcType="VARCHAR" property="electronictages5"/>
+        <result column="electronictages6" jdbcType="VARCHAR" property="electronictages6"/>
+
+        <result column="quantity" jdbcType="VARCHAR" property="quantity"/>
+        <result column="monthQuantity" jdbcType="VARCHAR" property="monthQuantity"/>
+
+        <result column="ifcontrol" jdbcType="VARCHAR" property="ifcontrol"/>
+        <result column="access_token" jdbcType="VARCHAR" property="access_token"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, machineID, QRcode, parentID, type, name, ip, onlinestate, state, remark,createTime,updateTime,actionState,powerType
+  </sql>
+    <select id="selectquanxian" resultMap="BaseResultMap">
+      select rp.role_name,p.name,p.ip,rpr.ifview,rpr.ifcontrol,pg.groupName
+from tb_pdu p
+LEFT JOIN  tb_role_pdu_relation rpr on p.ID=rpr.mpermissionsID
+left join roles_permissions rp on rp.id=rpr.roleID
+left join tb_pdu_group_relation pgr on pgr.pduID=p.id
+LEFT JOIN tb_pdu_group pg on pg.ID=pgr.pduGroupID
+order  by  rp.role_name  asc
+    </select>
+    <select id="yunxingzhong" resultType="java.lang.Integer">
+        select count(onlinestate) from tb_pdu where state=1 AND  onlinestate=1
+    </select>
+    <select id="yiguanbi" resultType="java.lang.Integer">
+        select count(onlinestate) from tb_pdu where state=1 AND  onlinestate=0
+    </select>
+    <select id="guzhang" resultType="java.lang.Integer">
+        select count(onlinestate) from tb_pdu where state=1 AND  onlinestate=3
+    </select>
+    <select id="lixian" resultType="java.lang.Integer">
+        select count(onlinestate) from tb_pdu where state=1 AND  onlinestate=2
+    </select>
+
+    <select id="selectAllByIp" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where ID = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectpdulist" resultMap="BaseResultMap">
+        SELECT *from tb_pdu
+
+    </select>
+
+    <select id="selectzongshu" resultType="java.lang.Integer">
+        select count(ID) from tb_pdu where state=1
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where ID = #{id,jdbcType=INTEGER}
+    </select>
+    <update id="updateOnlinestate" parameterType="com.chuangkou.pdu.entity.Pdu">
+    UPDATE  tb_pdu set onlinestate=#{onlinestate,jdbcType=VARCHAR} WHERE  ID = #{id,jdbcType=INTEGER}
+
+    </update>
+
+    <!--搜索所有的PDU  xulei  add 2018-02-06-->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where state = "1"
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_pdu
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.chuangkou.pdu.entity.Pdu">
+    insert into tb_pdu (ID, machineID, QRcode, 
+      parentID, type, name, 
+      ip, onlinestate, state, createTime,updateTime
+      remark,actionState,powerType,electronictages1,electronictages2,electronictages3,
+      electronictages4,electronictages5,electronictages6)
+    values (#{id,jdbcType=INTEGER}, #{machineid,jdbcType=VARCHAR}, #{qrcode,jdbcType=VARCHAR}, 
+      #{parentid,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{ip,jdbcType=VARCHAR}, #{onlinestate,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR},
+      #{createTime,jdbcType=VARCHAR},#{updateTime,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR},#{actionState,jdbcType=VARCHAR},#{powerType,jdbcType=VARCHAR},
+      #{electronictages1,jdbcType=VARCHAR},#{electronictages2,jdbcType=VARCHAR},#{electronictages3,jdbcType=VARCHAR},
+      #{electronictages4,jdbcType=VARCHAR},#{electronictages5,jdbcType=VARCHAR},#{electronictages6,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.Pdu">
+        <!--主键返回-->
+        <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tb_pdu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="machineid != null">
+                machineID,
+            </if>
+            <if test="qrcode != null">
+                QRcode,
+            </if>
+            <if test="parentid != null">
+                parentID,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="onlinestate != null">
+                onlinestate,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="actionState != null">
+                actionState,
+            </if>
+            <if test="powerType != null">
+                powerType,
+            </if>
+            <if test="electronictages1 != null">
+                electronictages1 = #{electronictages1,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages2 != null">
+                electronictages2 = #{electronictages2,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages3 != null">
+                electronictages3 = #{electronictages3,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages4 != null">
+                electronictages4 = #{electronictages4,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages5 != null">
+                electronictages5 = #{electronictages5,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages6 != null">
+                electronictages6 = #{electronictages6,jdbcType=VARCHAR},
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="machineid != null">
+                #{machineid,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcode != null">
+                #{qrcode,jdbcType=VARCHAR},
+            </if>
+            <if test="parentid != null">
+                #{parentid,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="onlinestate != null">
+                #{onlinestate,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="actionState != null">
+                #{actionState,jdbcType=VARCHAR},
+            </if>
+            <if test="powerType != null">
+                #{powerType,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages1 != null">
+                electronictages1 = #{electronictages1,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages2 != null">
+                electronictages2 = #{electronictages2,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages3 != null">
+                electronictages3 = #{electronictages3,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages4 != null">
+                electronictages4 = #{electronictages4,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages5 != null">
+                electronictages5 = #{electronictages5,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages6 != null">
+                electronictages6 = #{electronictages6,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.chuangkou.pdu.entity.Pdu">
+        update tb_pdu
+        <set>
+            <if test="machineid != null">
+                machineID = #{machineid,jdbcType=VARCHAR},
+            </if>
+            <if test="qrcode != null">
+                QRcode = #{qrcode,jdbcType=VARCHAR},
+            </if>
+            <if test="parentid != null">
+                parentID = #{parentid,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="onlinestate != null">
+                onlinestate = #{onlinestate,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="actionState != null">
+                actionState = #{actionState,jdbcType=VARCHAR},
+            </if>
+            <if test="powerType != null">
+                powerType = #{powerType,jdbcType=VARCHAR},
+            </if>
+
+            <if test="electronictages1 != null">
+                electronictages1 = #{electronictages1,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages2 != null">
+                electronictages2 = #{electronictages2,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages3 != null">
+                electronictages3 = #{electronictages3,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages4 != null">
+                electronictages4 = #{electronictages4,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages5 != null">
+                electronictages5 = #{electronictages5,jdbcType=VARCHAR},
+            </if>
+            <if test="electronictages6 != null">
+                electronictages6 = #{electronictages6,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.Pdu">
+    update tb_pdu
+    set machineID = #{machineid,jdbcType=VARCHAR},
+      QRcode = #{qrcode,jdbcType=VARCHAR},
+      parentID = #{parentid,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      onlinestate = #{onlinestate,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      actionState = #{actionState,jdbcType=VARCHAR},
+      powerType = #{powerType,jdbcType=VARCHAR},
+      electronictages1 = #{electronictages1,jdbcType=VARCHAR},
+      electronictages2 = #{electronictages2,jdbcType=VARCHAR},
+      electronictages3 = #{electronictages3,jdbcType=VARCHAR},
+      electronictages4 = #{electronictages4,jdbcType=VARCHAR},
+      electronictages5 = #{electronictages5,jdbcType=VARCHAR},
+      electronictages6 = #{electronictages6,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+    <!--xulei add 2018-02-08 修改记录状态为已删除-->
+    <update id="updateByPduState" parameterType="com.chuangkou.pdu.entity.Pdu">
+        update tb_pdu
+        set state = "0"
+        where ID = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--xulei add 2018-02-24 通过机器唯一码查找记录-->
+    <select id="selectByMachineID" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where machineID = #{machineid,jdbcType=VARCHAR}
+    </select>
+
+
+    <!--xulei add 2018-02-24 修改记录状态为已删除-->
+    <update id="updateStateView" parameterType="com.chuangkou.pdu.entity.Pdu">
+        update tb_pdu
+        set state = "1"
+        where ID = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--xulei add 2018-02-25 根据二维码查找设备记录-->
+    <select id="selectByQrcode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where machineID = #{machineid,jdbcType=VARCHAR}
+    </select>
+
+    <!--xulei add 返回设备分组和详情信息 接口用-->
+    <select id="pduInfoAllList" parameterType="com.chuangkou.pdu.entity.PduInfoTemp" resultMap="BaseResultMap2">
+        SELECT z.ID as pduid, z.machineID as machineID, z.`name` as `name`, z.ip as ip, z.onlinestate as onlinestate,
+        z.createTime as updateTime,
+        z.voltage as voltage, z.current as current, z.watt as watt, z.actionState as relaystate, z.overvoltage as
+        overvoltage,z.state as state,
+        z.undervoltage as undervoltage, z.overcurrent as overcurrent, z.circuitbreaker as circuitbreaker,
+        z.electricleakage as electricleakage,
+        z.electronictages1 as electronictages1, z.electronictages2 as electronictages2,
+        z.electronictages3 as electronictages3, z.electronictages4 as electronictages4, z.electronictages5 as
+        electronictages5,
+        z.electronictages6 as electronictages6,z.type as type,z.quantity as quantity,
+        d.groupID as pdugroupid, d.groupName as groupName,r.ifcontrol as ifcontrol
+        FROM
+        (
+        select DISTINCT rpr.mpermissionsID as mpermissionsID,rpr.ifview as ifview,
+        rpr.ifcontrol as ifcontrol,p.type as type
+        from users u
+        LEFT JOIN user_roles ur on u.username = ur.userName
+        LEFT JOIN roles_permissions rp on ur.role_name = rp.role_name
+        LEFT JOIN tb_role_pdu_relation rpr on rpr.roleID = rp.id
+        LEFT JOIN tb_pdu p on p.ID = rpr.mpermissionsID
+        where u.token = #{access_token,jdbcType=VARCHAR} AND rpr.ifview = "1"
+        ) r
+        LEFT JOIN
+        (select c.pduID as pduID , b.ID as groupID , b.groupName as groupName
+        from tb_pdu_group b LEFT JOIN tb_pdu_group_relation c ON b.ID = c.pduGroupID
+
+        ) d on r.mpermissionsID = d.pduID
+
+        LEFT JOIN
+        (
+        SELECT t.ID as ID, t.machineID as machineID, t.`name` as `name`, t.ip as ip,t.onlinestate as onlinestate,
+        t.createTime as createTime,t.state as state,
+        t.electronictages1 as electronictages1, t.electronictages2 as electronictages2,
+        t.electronictages3 as electronictages3, t.electronictages4 as electronictages4, t.electronictages5 as
+        electronictages5,
+        t.electronictages6 as electronictages6,t.type as type,
+        h.voltage as voltage,h.current as current,h.watt as watt, t.actionState as actionState, h.overvoltage as
+        overvoltage,
+        h.undervoltage as undervoltage, h.overcurrent as overcurrent, h.circuitbreaker as circuitbreaker,
+        h.electricleakage as electricleakage,h.quantity as quantity
+
+        from
+        tb_pdu t LEFT JOIN
+
+        (
+
+        select e.ID as ID, e.pduID as pduID, e.voltage as voltage, e.current as current, e.collectionTime as
+        collectionTime,
+        e.watt as watt, e.relayState as relayState, e.overvoltage as overvoltage,
+        e.undervoltage as undervoltage, e.overcurrent as overcurrent, e.circuitbreaker as circuitbreaker,
+        e.electricleakage as electricleakage,e.quantity as quantity
+        from tb_pdu_info e
+        inner join
+        (select g.pduID,
+        max(collectionTime) 'maxcollectionTime'
+        from tb_pdu_info g
+        group by g.pduID) f on e.pduID=f.pduID and e.collectionTime=f.maxcollectionTime
+        ) h on t.ID = h.pduID
+        ) z on z.ID = d.pduID
+
+        where z.state = "1" AND d.groupID = #{pdugroupid,jdbcType=VARCHAR}
+
+
+    </select>
+
+    <!--xulei add 返回设备分组和详情信息 接口用-->
+    <select id="pduInfoAllListTwo" parameterType="com.chuangkou.pdu.entity.PduInfoTemp" resultMap="BaseResultMap2">
+        SELECT z.ID as pduid, z.machineID as machineID, z.`name` as `name`, z.ip as ip, z.onlinestate as onlinestate,
+        z.createTime as updateTime,
+        z.voltage as voltage, z.current as current, z.watt as watt, z.actionState as relaystate, z.overvoltage as
+        overvoltage,z.state as state,
+        z.undervoltage as undervoltage, z.overcurrent as overcurrent, z.circuitbreaker as circuitbreaker,
+        z.electricleakage as electricleakage,
+        z.electronictages1 as electronictages1, z.electronictages2 as electronictages2,
+        z.electronictages3 as electronictages3, z.electronictages4 as electronictages4, z.electronictages5 as
+        electronictages5,
+        z.electronictages6 as electronictages6,z.type as type,z.quantity as quantity,
+        d.groupID as pdugroupid, d.groupName as groupName,r.ifcontrol as ifcontrol
+        FROM
+        (
+        select DISTINCT rpr.mpermissionsID as mpermissionsID,rpr.ifview as ifview,
+        rpr.ifcontrol as ifcontrol,p.type as type
+        from users u
+        LEFT JOIN user_roles ur on u.username = ur.userName
+        LEFT JOIN roles_permissions rp on ur.role_name = rp.role_name
+        LEFT JOIN tb_role_pdu_relation rpr on rpr.roleID = rp.id
+        LEFT JOIN tb_pdu p on p.ID = rpr.mpermissionsID
+        where u.token = #{access_token,jdbcType=VARCHAR} AND rpr.ifview = "1"
+        ) r
+        LEFT JOIN
+        (select c.pduID as pduID , b.ID as groupID , b.groupName as groupName
+        from tb_pdu_group b LEFT JOIN tb_pdu_group_relation c ON b.ID = c.pduGroupID
+
+        ) d on r.mpermissionsID = d.pduID
+
+        LEFT JOIN
+        (
+        SELECT t.ID as ID, t.machineID as machineID, t.`name` as `name`, t.ip as ip,t.onlinestate as onlinestate,
+        t.createTime as createTime,t.state as state,
+        t.electronictages1 as electronictages1, t.electronictages2 as electronictages2,
+        t.electronictages3 as electronictages3, t.electronictages4 as electronictages4, t.electronictages5 as
+        electronictages5,
+        t.electronictages6 as electronictages6,t.type as type,
+        h.voltage as voltage,h.current as current,h.watt as watt, t.actionState as actionState, h.overvoltage as
+        overvoltage,
+        h.undervoltage as undervoltage, h.overcurrent as overcurrent, h.circuitbreaker as circuitbreaker,
+        h.electricleakage as electricleakage,h.quantity as quantity
+
+        from
+        tb_pdu t LEFT JOIN
+
+        (
+
+        select e.ID as ID, e.pduID as pduID, e.voltage as voltage, e.current as current, e.collectionTime as
+        collectionTime,
+        e.watt as watt, e.relayState as relayState, e.overvoltage as overvoltage,
+        e.undervoltage as undervoltage, e.overcurrent as overcurrent, e.circuitbreaker as circuitbreaker,
+        e.electricleakage as electricleakage,e.quantity as quantity
+        from tb_pdu_info e
+        inner join
+        (select g.pduID,
+        max(collectionTime) 'maxcollectionTime'
+        from tb_pdu_info g
+        group by g.pduID) f on e.pduID=f.pduID and e.collectionTime=f.maxcollectionTime
+        ) h on t.ID = h.pduID
+        ) z on z.ID = d.pduID
+
+        where z.state = "1"
+    </select>
+
+    <!--根据设备ID获取详细信息 xulei add-->
+    <select id="pduInfoByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap2">
+  SELECT z.ID as pduid, z.machineID as machineID, z.`name` as `name`, z.ip as ip, z.onlinestate as onlinestate,
+        z.createTime as updateTime,
+        z.voltage as voltage, z.current as current, z.watt as watt, z.actionState as relaystate, z.overvoltage as
+        overvoltage,z.state as state,
+        z.undervoltage as undervoltage, z.overcurrent as overcurrent, z.circuitbreaker as circuitbreaker,
+        z.electricleakage as electricleakage,
+        z.electronictages1 as electronictages1, z.electronictages2 as electronictages2,
+        z.electronictages3 as electronictages3, z.electronictages4 as electronictages4, z.electronictages5 as electronictages5,
+        z.electronictages6 as electronictages6,z.type as type,z.quantity as quantity,
+        d.groupID as pdugroupid, d.groupName as groupName
+        FROM
+        (
+        SELECT t.ID as ID, t.machineID as machineID, t.`name` as `name`, t.ip as ip,t.onlinestate as onlinestate,
+        t.createTime as createTime,t.state as state,
+        t.electronictages1 as electronictages1, t.electronictages2 as electronictages2,
+        t.electronictages3 as electronictages3, t.electronictages4 as electronictages4, t.electronictages5 as electronictages5,
+        t.electronictages6 as electronictages6,t.type as type,h.quantity as quantity,
+        h.voltage as voltage,h.current as current,h.watt as watt, t.actionState as actionState, h.overvoltage as
+        overvoltage,
+        h.undervoltage as undervoltage, h.overcurrent as overcurrent, h.circuitbreaker as circuitbreaker,
+        h.electricleakage as electricleakage
+
+        from
+        tb_pdu t LEFT JOIN
+
+        (
+
+        select e.ID as ID, e.pduID as pduID, e.voltage as voltage, e.current as current, e.collectionTime as
+        collectionTime,
+        e.watt as watt, e.relayState as relayState, e.overvoltage as overvoltage,
+        e.undervoltage as undervoltage, e.overcurrent as overcurrent, e.circuitbreaker as circuitbreaker,
+        e.electricleakage as electricleakage,e.quantity as quantity
+        from tb_pdu_info e
+        inner join
+        (select g.pduID,
+        max(collectionTime) 'maxcollectionTime'
+        from tb_pdu_info g
+        group by g.pduID) f on e.pduID=f.pduID and e.collectionTime=f.maxcollectionTime
+        ) h on t.ID = h.pduID
+        ) z
+        LEFT JOIN
+
+        (select c.pduID as pduID , b.ID as groupID , b.groupName as groupName
+        from tb_pdu_group b LEFT JOIN tb_pdu_group_relation c ON b.ID = c.pduGroupID
+
+        ) d on z.ID = d.pduID
+        where
+            z.state  = '1' AND z.ID = #{pduid,jdbcType=INTEGER}
+    </select>
+
+    <!--xulei add 返回设备分组和详情信息 接口用-->
+    <select id="selectByPduKeyword" parameterType="java.util.Map" resultMap="BaseResultMap2">
+    SELECT z.ID as pduid, z.machineID as machineID, z.`name` as `name`, z.ip as ip, z.onlinestate as onlinestate,
+        z.createTime as updateTime,
+        z.voltage as voltage, z.current as current, z.watt as watt, z.actionState as relaystate, z.overvoltage as
+        overvoltage,z.state as state,
+        z.undervoltage as undervoltage, z.overcurrent as overcurrent, z.circuitbreaker as circuitbreaker,
+        z.electricleakage as electricleakage,
+        z.electronictages1 as electronictages1, z.electronictages2 as electronictages2,
+        z.electronictages3 as electronictages3, z.electronictages4 as electronictages4, z.electronictages5 as electronictages5,
+        z.electronictages6 as electronictages6,z.type as type,z.quantity as quantity,
+        d.groupID as pdugroupid, d.groupName as groupName
+        FROM
+        (
+        SELECT t.ID as ID, t.machineID as machineID, t.`name` as `name`, t.ip as ip,t.onlinestate as onlinestate,
+        t.createTime as createTime,t.state as state,
+        t.electronictages1 as electronictages1, t.electronictages2 as electronictages2,
+        t.electronictages3 as electronictages3, t.electronictages4 as electronictages4, t.electronictages5 as electronictages5,
+        t.electronictages6 as electronictages6,t.type as type,
+        h.voltage as voltage,h.current as current,h.watt as watt, t.actionState as actionState, h.overvoltage as
+        overvoltage,
+        h.undervoltage as undervoltage, h.overcurrent as overcurrent, h.circuitbreaker as circuitbreaker,
+        h.electricleakage as electricleakage,h.quantity as quantity
+
+        from
+        tb_pdu t LEFT JOIN
+
+        (
+
+        select e.ID as ID, e.pduID as pduID, e.voltage as voltage, e.current as current, e.collectionTime as
+        collectionTime,
+        e.watt as watt, e.relayState as relayState, e.overvoltage as overvoltage,
+        e.undervoltage as undervoltage, e.overcurrent as overcurrent, e.circuitbreaker as circuitbreaker,
+        e.electricleakage as electricleakage,e.quantity as quantity
+        from tb_pdu_info e
+        inner join
+        (select g.pduID,
+        max(collectionTime) 'maxcollectionTime'
+        from tb_pdu_info g
+        group by g.pduID) f on e.pduID=f.pduID and e.collectionTime=f.maxcollectionTime
+        ) h on t.ID = h.pduID
+        ) z
+        LEFT JOIN
+
+        (select c.pduID as pduID , b.ID as groupID , b.groupName as groupName
+        from tb_pdu_group b LEFT JOIN tb_pdu_group_relation c ON b.ID = c.pduGroupID
+
+        ) d on z.ID = d.pduID
+
+            where
+             z.state  = '1' AND (z.name like '%${keyword}%'  or  z.ip  like '%${keyword}%' or d.groupName  like '%${keyword}%')
+    </select>
+
+
+    <!--搜索所有的PDU  xulei  add 2018-02-06-->
+    <select id="selectAllByPduOnline" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where state = "1" AND onlinestate = "1" AND actionState = "1"
+    </select>
+
+
+    <!--根据条件搜索PDU  xulei  add 2018-02-06-->
+    <select id="selectAllBySearch" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where state = "1"
+        <if test="type != null">
+            AND type = #{type,jdbcType=VARCHAR}
+        </if>
+        <if test="ip != null">
+            AND ip = #{ip,jdbcType=VARCHAR}
+        </if>
+        <if test="machineid != null">
+            AND machineid = #{machineid,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null">
+            AND name = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="onlinestate != null">
+            AND onlinestate = #{onlinestate,jdbcType=VARCHAR}
+        </if>
+        <if test="state != null">
+            AND state = #{state,jdbcType=VARCHAR}
+        </if>
+        <if test="createTime != null">
+            AND createTime = #{createTime,jdbcType=VARCHAR}
+        </if>
+        <if test="updateTime != null">
+            AND updateTime = #{updateTime,jdbcType=VARCHAR}
+        </if>
+        <if test="actionState != null">
+            AND actionState = #{actionState,jdbcType=VARCHAR}
+        </if>
+        <if test="powerType != null">
+            AND powerType = #{powerType,jdbcType=VARCHAR}
+        </if>
+
+    </select>
+
+
+    <!--搜索非空开类型的设备  xulei  add 2018-05-09-->
+    <select id="selectAllByNotSwitch" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_pdu
+        where state = "1"
+        <if test="type != null">
+            AND type &lt; &gt; #{type,jdbcType=VARCHAR},
+        </if>
+
+        <if test="onlinestate != null">
+            AND onlinestate = #{onlinestate,jdbcType=VARCHAR},
+        </if>
+        <if test="state != null">
+            AND state = #{state,jdbcType=VARCHAR},
+        </if>
+
+        <if test="actionState != null">
+            AND actionState = #{actionState,jdbcType=VARCHAR},
+        </if>
+
+
+    </select>
+
+    <!--xulei add 返回设备分组和详情信息 接口用-->
+    <select id="pduInfoGetMonthQuantity" parameterType="java.lang.Integer" resultMap="BaseResultMap2">
+    select (x.quantity - y.quantity) as monthQuantity
+        FROM
+        (
+        select a.pduID,a.collectionTime,a.quantity
+        from  tb_pdu_info a LEFT JOIN
+        (
+        select MAX(c.collectionTime) as maxcollectionTime,c.pduID as pduID
+        from tb_pdu_info c
+        where Month(c.collectionTime) = Month(curdate())and c.pduID = #{pduid,jdbcType=INTEGER}
+
+        ) b on a.pduID = b.pduID and a.collectionTime = b.maxcollectionTime
+
+        where Month(a.collectionTime) = Month(curdate())and a.pduID = #{pduid,jdbcType=INTEGER}
+
+        ORDER BY a.collectionTime DESC
+        limit 1
+        ) as x,
+
+        (
+        select d.pduID,d.collectionTime,d.quantity
+        from  tb_pdu_info d LEFT JOIN
+        (
+        select MIN(f.collectionTime) as maxcollectionTime,f.pduID as pduID
+        from tb_pdu_info f
+        where Month(f.collectionTime) = Month(curdate())and f.pduID = #{pduid,jdbcType=INTEGER}
+
+        ) e on d.pduID = e.pduID and d.collectionTime = e.maxcollectionTime
+
+        where Month(d.collectionTime) = Month(curdate())and d.pduID = #{pduid,jdbcType=INTEGER}
+
+        ORDER BY d.collectionTime
+        limit 1
+
+        ) as y
+        where x.pduID = y.pduID
+
+    </select>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.OrganizationMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.Organization">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="detailed" jdbcType="VARCHAR" property="detailed" />
+    <result column="parentID" jdbcType="INTEGER" property="parentid" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, name, detailed, parentID, remark
+  </sql>
+  <select id="selectOne" resultMap="BaseResultMap">
+    SELECT * from tb_organization where ID = #{id}
+  </select>
+
+  <select id="selectall" resultMap="BaseResultMap">
+    SELECT * FROM tb_organization
+  </select>
+
+  <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from tb_organization
+    where ID = #{id}
+  </delete>
+
+  <update id="update" parameterType="com.chuangkou.pdu.entity.Organization">
+    update tb_organization
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="detailed != null">
+        detailed = #{detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null">
+        parentID = #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_organization
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_organization
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.Organization">
+    insert into tb_organization (ID, name, detailed, 
+      parentID, remark)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{detailed,jdbcType=VARCHAR}, 
+      #{parentid,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="saveOrganization" parameterType="com.chuangkou.pdu.entity.Organization">
+    <!--主键返回-->
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_organization
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="detailed != null">
+        detailed,
+      </if>
+      <if test="parentid != null">
+        parentID,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="detailed != null">
+        #{detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null">
+        #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.Organization">
+    update tb_organization
+    set name = #{name,jdbcType=VARCHAR},
+      detailed = #{detailed,jdbcType=VARCHAR},
+      parentID = #{parentid,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

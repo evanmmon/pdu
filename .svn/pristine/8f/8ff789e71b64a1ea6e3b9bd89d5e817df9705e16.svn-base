@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chuangkou.pdu.dao.PduWarningMapper">
+  <resultMap id="BaseResultMap" type="com.chuangkou.pdu.entity.PduWarning">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="pduID" jdbcType="INTEGER" property="pduid" />
+    <result column="warningTime" jdbcType="VARCHAR" property="warningtime" />
+    <result column="warningType" jdbcType="VARCHAR" property="warningtype" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <!--<association property="pdu" resultMap="com.chuangkou.pdu.dao.PduMapper.BaseResultMap"></association>-->
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, pduID, warningTime, warningType, state
+  </sql>
+  <select id="selectall2"  resultMap="BaseResultMap">
+
+    select * from tb_pdu_warning
+    ORDER BY warningTime DESC
+  </select>
+
+  <select id="selectall" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+select p.name, p.ip, PW.STATE ,PW.warningTime ,PW.warningType
+from tb_pdu_warning PW
+ join tb_pdu p on p.ID = PW.pduID
+  WHERE  p.state=1
+  </select>
+  <select id="selectzongshu" resultType="java.lang.Integer">
+  select count(ID) from tb_pdu_warning
+
+</select>
+  <select id="selectweichulizongshu" resultType="java.lang.Integer">
+
+select count(state) from tb_pdu_warning where state =0
+  </select>
+
+  <select id="selectyichulizongshu" resultType="java.lang.Integer">
+
+select count(state) from tb_pdu_warning where state =2
+  </select>
+  <select id="selectchulizhong" resultType="java.lang.Integer">
+
+    select count(state) from tb_pdu_warning where state =1
+  </select>
+  <select id="selectyihulve" resultType="java.lang.Integer">
+
+    select count(state) from tb_pdu_warning where state =3
+  </select>
+
+
+  <select id="selectjidianqi" resultType="java.lang.Integer">
+select count(warningType) from tb_pdu_warning where warningType =2
+
+  </select>
+
+  <select id="selectguoya" resultType="java.lang.Integer">
+select count(warningType) from tb_pdu_warning where warningType =3
+
+  </select>
+  <select id="selectqianya" resultType="java.lang.Integer">
+select count(warningType) from tb_pdu_warning where warningType =4
+
+  </select>
+  <select id="selectguoliu" resultType="java.lang.Integer">
+select count(warningType) from tb_pdu_warning where warningType =5
+
+  </select>
+  <select id="selectduanlu" resultType="java.lang.Integer">
+
+select count(warningType) from tb_pdu_warning where warningType =1
+  </select>
+  <select id="selectloudian" resultType="java.lang.Integer">
+
+select count(warningType) from tb_pdu_warning where warningType =0
+  </select>
+
+
+
+
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_pdu_warning
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.chuangkou.pdu.entity.PduWarning">
+    insert into tb_pdu_warning (ID, pduID, warningTime, 
+      warningType, state)
+    values (#{id,jdbcType=INTEGER}, #{pduid,jdbcType=INTEGER}, #{warningtime,jdbcType=VARCHAR}, 
+      #{warningtype,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chuangkou.pdu.entity.PduWarning">
+    insert into tb_pdu_warning
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="pduid != null">
+        pduID,
+      </if>
+      <if test="warningtime != null">
+        warningTime,
+      </if>
+      <if test="warningtype != null">
+        warningType,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pduid != null">
+        #{pduid,jdbcType=INTEGER},
+      </if>
+      <if test="warningtime != null">
+        #{warningtime,jdbcType=VARCHAR},
+      </if>
+      <if test="warningtype != null">
+        #{warningtype,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.chuangkou.pdu.entity.PduWarning">
+    update tb_pdu_warning
+    <set>
+      <if test="pduid != null">
+        pduID = #{pduid,jdbcType=INTEGER},
+      </if>
+      <if test="warningtime != null">
+        warningTime = #{warningtime,jdbcType=VARCHAR},
+      </if>
+      <if test="warningtype != null">
+        warningType = #{warningtype,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chuangkou.pdu.entity.PduWarning">
+    update tb_pdu_warning
+    set pduID = #{pduid,jdbcType=INTEGER},
+      warningTime = #{warningtime,jdbcType=VARCHAR},
+      warningType = #{warningtype,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

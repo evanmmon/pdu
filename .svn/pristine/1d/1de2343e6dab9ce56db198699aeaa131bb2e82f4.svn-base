@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+http://www.springframework.org/schema/task
+http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+
+    <!-- 扫描所有的controller -->
+        <context:component-scan base-package="com.chuangkou.pdu.controller"/>
+
+    <!-- 不处理静态资源 -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 使用默认的配置管理HandleMapping和HandleAdapter等，
+    	即spring的核心处理机制，如果需要自定义，可以手动配置HandleMapping和HandleAdapter -->
+    <mvc:annotation-driven/>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.GsonHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <aop:config proxy-target-class="true"></aop:config>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+    <!-- 配置文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 配置文件上传的最大体积 -->
+        <property name="maxUploadSize" value="102400000"></property>
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="utf-8" />
+        <!-- 文件大小最大值 -->
+
+        <!-- 内存中的最大值 -->
+        <property name="maxInMemorySize" value="40960" />
+    </bean>
+
+
+    <!-- 配置视图的位置（即前缀和后缀） -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          id="internalResourceViewResolver">
+        <!-- 前缀 -->
+        <property name="prefix" value="/"/>
+        <!-- 后缀 -->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <task:annotation-driven />
+    <context:annotation-config></context:annotation-config>
+    <!-- spring 扫描注解配置 -->
+    <!--<context:component-scan base-package="com.chuangkou.pdu.*"></context:component-scan>-->
+    <!-- 开启这个配置 spring才能识别@Scheduled注解 -->
+    <!-- 配置拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <mvc:exclude-mapping path="/doLogin"/>
+            <mvc:exclude-mapping path="/jsonPdutest"/>
+            <mvc:exclude-mapping path="/jsonAPPSocket"/>
+            <mvc:exclude-mapping path="/app/**"/>
+
+            <mvc:exclude-mapping path="/jobPduInfoTask"/>
+            <!--安卓接口放行-->
+            <mvc:exclude-mapping path="/jsonPduList"/>
+            <mvc:exclude-mapping path="/get_new_version"/>
+            <mvc:exclude-mapping path="/analysis/*"/>
+            <mvc:exclude-mapping path="/group/**"/>
+            <mvc:exclude-mapping path="/scene/**"/>
+            <mvc:exclude-mapping path="/timing/**"/>
+            <mvc:exclude-mapping path="/user/**"/>
+            <mvc:exclude-mapping path="/timing/**"/>
+            <mvc:exclude-mapping path="/device/**"/>
+            <mvc:exclude-mapping path="/warning/**"/>
+            <bean class="com.chuangkou.pdu.controller.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <!--
+    <task:annotation-driven scheduler="qbScheduler" mode="proxy"/>
+    <task:scheduler id="qbScheduler" pool-size="10"/>
+    -->
+</beans>

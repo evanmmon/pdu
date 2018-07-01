@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 配置xml需要的schema -->
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <!-- 扫描包下面的所有的类是否受spring的管理，需要spring创建对象 -->
+
+    <context:component-scan base-package="com.chuangkou.pdu.*">
+        <!-- 不包含@Controller注解和@ControllerAdvice注解（配置全局异常处理的）
+            （因为spring-mvc里面已经扫描并管理了，所以为了避免重复管理，应该排除） -->
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.scheduling.annotation.EnableScheduling"/>
+<!--防止多次扫描自启动程序-->
+        <!--<context:exclude-filter type="annotation"-->
+                                <!--expression="org.springframework.stereotype.Service"/>-->
+    </context:component-scan>
+
+    <!-- 配置config.properties的文件路径 -->
+    <context:property-placeholder location="classpath:config.properties" />
+
+    <!-- 配置数据库和连接池信息，使用config.properties里面的值 -->
+    <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- 数据连接信息 -->
+        <property name="jdbcUrl" value="${jdbc.url}"></property>
+        <property name="driverClass" value="${jdbc.driverClassName}"></property>
+        <property name="user" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+
+        <!-- 初始化时获取三个连接（取值应在minPoolSize与maxPoolSize之间。默认值: 3） -->
+        <property name="initialPoolSize" value="${jdbc.initialPoolSize}"></property>
+        <!-- 连接池中保留的最小连接数，默认值：3 -->
+        <property name="minPoolSize" value="${jdbc.minPoolSize}"></property>
+        <!-- 连接池中保留的最大连接数，默认值：15 -->
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+        <!-- 当连接池中的连接数耗尽的时候，c3p0一次同时获取的连接数，默认值：3 -->
+        <property name="acquireIncrement" value="${jdbc.acquireIncrement}"></property>
+        <!-- 控制数据源内加载的PreparedStatements数量。如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 0 -->
+        <property name="maxStatements" value="${jdbc.maxStatements}"></property>
+        <!--maxStatementsPerConnection定义了连接池内单个连接所拥有的最大缓存statements数。Default: 0 -->
+        <property name="maxStatementsPerConnection" value="${jdbc.maxStatementsPerConnection}"></property>
+        <!--最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="${jdbc.maxIdleTime}"></property>
+    </bean>
+
+
+
+    <!--<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"-->
+    <!--init-method="init" destroy-method="close">-->
+    <!--<property name="driverClassName" value="${jdbc.driverClassName}" />-->
+    <!--<property name="url" value="${jdbc.url}" />-->
+    <!--<property name="username" value="${jdbc.username}" />-->
+    <!--<property name="password" value="${jdbc.password}" />-->
+    <!--<property name="maxActive" value="${db.maxActive}" />-->
+    <!--<property name="initialSize" value="${db.initialSize}" />-->
+    <!--<property name="maxWait" value="${db.maxWait}" />-->
+    <!--<property name="minIdle" value="${db.minIdle}" />-->
+    <!--<property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}" />-->
+    <!--<property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}" />-->
+    <!--<property name="testWhileIdle" value="${db.testWhileIdle}" />-->
+    <!--<property name="testOnBorrow" value="${db.testOnBorrow}" />-->
+    <!--<property name="testOnReturn" value="${db.testOnReturn}" />-->
+    <!--<property name="poolPreparedStatements" value="${db.poolPreparedStatements}" />-->
+    <!--<property name="maxPoolPreparedStatementPerConnectionSize" value="${db.maxPoolPreparedStatementPerConnectionSize}" />-->
+    <!--<property name="filters" value="stat" />-->
+    <!--</bean>-->
+
+    <!--服务启动后自动运行socket线程池，接收客户端请求 暂时关闭-->
+    <!--<bean id="startUpListener" class="com.chuangkou.pdu.service.StartupListener"></bean>-->
+
+
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+
+    <!-- 数据库保存的密码是使用MD5算法加密的，所以这里需要配置一个密码匹配对象 -->
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.Md5CredentialsMatcher"></bean>
+
+    <!-- 缓存管理 -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"></bean>
+
+    <!--
+      使用Shiro自带的JdbcRealm类
+      指定密码匹配所需要用到的加密对象
+      指定存储用户、角色、权限许可的数据源及相关查询语句
+     -->
+    <bean id="jdbcRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"></property>
+        <property name="permissionsLookupEnabled" value="true"></property>
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- Shiro安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="jdbcRealm"></property>
+        <property name="cacheManager" ref="cacheManager"></property>
+    </bean>
+
+
+
+    <!--
+       Shiro主过滤器本身功能十分强大，其强大之处就在于它支持任何基于URL路径表达式的、自定义的过滤器的执行
+       Web应用中，Shiro可控制的Web请求必须经过Shiro主过滤器的拦截，Shiro对基于Spring的Web应用提供了完美的支持
+    -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!-- Shiro的核心安全接口，这个属性是必须的 -->
+        <property name="securityManager" ref="securityManager"></property>
+        <!-- 要求登录时的链接(登录页面地址)，非必须的属性，默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->
+        <property name="loginUrl" value="/login"></property>
+        <!-- 登录成功后要跳转的连接(本例中此属性用不到，因为登录成功后的处理逻辑在LoginC ontroller里硬编码) -->
+        <!-- <property name="successUrl" value="/" ></property> -->
+        <!-- 用户访问未对其授权的资源时，所显示的连接 -->
+        <property name="unauthorizedUrl" value="/"></property>
+        <property name="filterChainDefinitions">
+            <value>
+                <!--/**=anon-->
+            </value>
+        </property>
+    </bean>
+
+    <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- 自动扫描mapping.xml文件，**表示迭代查找 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml" />
+    </bean>
+
+     <!--DAO接口所在包名，Spring会自动查找其下的类 ,包下的类需要使用@MapperScan注解,否则容器注入会失败-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.chuangkou.pdu.*" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+
+    <!-- 声明式事务配置 -->
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="prefix" value="/"/>
+    </bean>
+    <!--&lt;!&ndash;配置通知（配置事务执行的方法定义的名称规则） &ndash;&gt;-->
+    <!--<tx:advice id="myAdvice" transaction-manager="transactionManager">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="save*" propagation="REQUIRED" />-->
+            <!--<tx:method name="del*" propagation="REQUIRED" />-->
+            <!--<tx:method name="update*" propagation="REQUIRED" />-->
+            <!--<tx:method name="*" read-only="true" />-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--&lt;!&ndash;配置AOP的规则 &ndash;&gt;-->
+    <!--<aop:config>-->
+        <!--&lt;!&ndash; 配置切入点 &ndash;&gt;-->
+        <!--<aop:pointcut id="pc" expression="execution(* com.chuangkou.pdu.service.*.*(..))" />-->
+        <!--<aop:advisor pointcut-ref="pc" advice-ref="myAdvice" />-->
+    <!--</aop:config>-->
+
+    <!--<bean id="pduTemporaryService2"  class="com.chuangkou.pdu.service.PduTemporaryService" />-->
+    <bean class="com.chuangkou.pdu.thread.SpringApplicationContextHolder" />
+    <!--<bean id="jsonAPPSocket" class="com.chuangkou.pdu.controller.PduController" init-method="jsonAPPSocket"></bean>-->
+
+
+</beans>
