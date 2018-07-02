@@ -84,14 +84,14 @@ var svg = d3.select("body").append("svg")
 	.append("g")
 	.attr("transform", "translate(80,0)");
 
-d3.json("http://localhost:8888/pdu/device/get_device_relationship_list", function(error, root) {
+d3.json("device_tree_original.json", function(error, root) {
+	console.log(root);
 	if(getCookie("index")==""){
 		index=0;
 		setCookie("index",index);
 	}else{
-		index = getCookie("index",1);
+		index = getCookie("index");
 	}
-	//alert(getCookie("index"));
 
 	d3.select("#previous").on("click",function() {
 		if (index>0) {index--;}else{index=0; alert("已经是第一组");return}
@@ -100,17 +100,16 @@ d3.json("http://localhost:8888/pdu/device/get_device_relationship_list", functio
 		location.reload();
 	});
 	d3.select("#next").on("click",function() {
-		if (count>index+1) {index++;}else{index=1;alert("已经是最后一组");return}
+		if (count>index+1) {index++;}else{alert("已经是最后一组");return}
 		group_current.text(" "+(index+1)+" ");
 		setCookie("index",index);
 		location.reload();
 	});
 	var strjson = JSON.stringify(root).replace(/childrens/g, "children");
 	var obj = eval('(' + strjson + ')');
-	count = obj.datas.device_list.length;
+	count = obj.data.device_list.length;
 	//console.log(count);
-
-	root = obj.datas.device_list[index];
+	root = obj.data.device_list[index];
 
 	var nodes = tree.nodes(root);
 	var links = tree.links(nodes);
@@ -118,8 +117,13 @@ d3.json("http://localhost:8888/pdu/device/get_device_relationship_list", functio
 	console.log(nodes);
 	console.log(links);
 
-	var legendnode = d3.select("h2#title").text(root.group_name + "结构拓扑图").append("svg").attr("class", "legend")
-			.attr("width", "130").attr("height", "30");
+	var	legendnode = d3.select("h2#title").text(function(){
+		if(root.group_name!=undefined){
+			return root.group_name+"结构拓扑图";
+		}
+		return "结构拓扑图";
+	}).append("svg").attr("class", "legend").attr("width", "130").attr("height", "30");
+
 	legendnode.append("rect").attr('width', 12).attr('height', 12).attr("x", 2).attr("y", 10).attr("class", "rect");
 	legendnode.append("text").text("空开").attr("class", "text").attr("x", 20).attr("y", 21);
 
@@ -180,12 +184,9 @@ d3.json("http://localhost:8888/pdu/device/get_device_relationship_list", functio
 		}
 		return -20;
 	});
-
 	var group_count = d3.select("#group_count").text(" "+count+" ");
 	var group_current = d3.select("#group_current").text(" "+(parseInt(index)+1)+" ");
 });
-
-
 
 </script>
 

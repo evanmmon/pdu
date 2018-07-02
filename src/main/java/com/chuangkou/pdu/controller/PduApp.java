@@ -2017,14 +2017,13 @@ public class PduApp extends BaseController {
             Exception {
 //        MsgBean msgBean = null;
         PrintWriter out = null;
-        GetDeviceRelationshipList GetDeviceRelationshipList = null;
+        GetDeviceRelationshipList getDeviceRelationshipList = null;
         try {
             request.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=UTF-8");
 //        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
             out = response.getWriter();
-            GetDeviceRelationshipList = new GetDeviceRelationshipList();
+            getDeviceRelationshipList = new GetDeviceRelationshipList();
 
             List<GetDeviceRelationshipList.DeviceListBean> switchInPutList = new ArrayList<com.chuangkou.pdu.bean.GetDeviceRelationshipList.DeviceListBean>();
 
@@ -2053,7 +2052,7 @@ public class PduApp extends BaseController {
                 switchInPutList.add(switchBean);
                 System.out.println("结束======");
             }
-            GetDeviceRelationshipList.setDevice_list(switchInPutList);
+            getDeviceRelationshipList.setDevice_list(switchInPutList);
 
             /**
             //搜索所有的空开设备
@@ -2111,29 +2110,28 @@ public class PduApp extends BaseController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-      //MsgBean<GetDeviceRelationshipList> msgBean = MsgBean.getInstance();
-//      msgBean.setData(GetDeviceRelationshipList);
+//      MsgBean<GetDeviceRelationshipList> msgBean = MsgBean.getInstance();
+//      msgBean.setData(getDeviceRelationshipList);
 //      out.print(msgBean.toJsonString());
+       
         String filePath = request.getSession().getServletContext().getRealPath("")+"/html/device_tree_original.json";
         System.out.println(filePath);
-        out.print(readFile(filePath,"gbk"));
+        out.print(readFile(filePath,"utf-8"));
         out.flush();
         out.close();
-
-
     }
 
+    
     private String readFile(String filePath,String encoding) {
     	BufferedReader br = null;
     	StringBuilder stringBuilder = new StringBuilder();
 		try {			
 	         File filename = new File(filePath); // 要读取以上路径的input。txt文件          
-			 br = new BufferedReader(new InputStreamReader(new FileInputStream(filename))); // 建立一个对象，它把文件内容转成计算机能读懂的语言  
+			 br = new BufferedReader(new InputStreamReader(new FileInputStream(filename),encoding)); // 建立一个对象，它把文件内容转成计算机能读懂的语言  
 	         String line = "";  
 	         line = br.readLine();  
 	         while (line != null) {  
-	        	 stringBuilder.append(new String(line.getBytes(),encoding)+"\n");
+	        	 stringBuilder.append(line+"\n");
 	             line = br.readLine(); // 一次读入一行数据  	             
 	         }  
 		} catch (Exception e) {
@@ -2147,8 +2145,7 @@ public class PduApp extends BaseController {
 				}
 			}
 		}     
-        return stringBuilder.toString();
-    	
+        return stringBuilder.toString();    	
     }
     
 
