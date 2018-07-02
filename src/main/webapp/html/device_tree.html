@@ -84,7 +84,7 @@ var svg = d3.select("body").append("svg")
 	.append("g")
 	.attr("transform", "translate(80,0)");
 
-d3.json("device_tree_original.json", function(error, root) {
+d3.json("http://localhost:8888/pdu/device/get_device_relationship_list", function(error, root) {
 	if(getCookie("index")==""){
 		index=0;
 		setCookie("index",index);

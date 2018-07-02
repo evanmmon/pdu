@@ -118,4 +118,22 @@
     <!--from tb_pdu_relation-->
     <!--where pduID = #{pduID,jdbcType=INTEGER}-->
   </select>
+
+
+  <select id="selectByParentIDEmpty"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_pdu_relation
+    where parent_id = ""
+  </select>
+
+
+  <select id="selectBySubChildrensSwitcheAndPlugs"  parameterType="java.lang.Integer"   resultMap="BaseResultMap">
+
+    SELECT DISTINCT a.pduID as pduID, a.switchPduID as switchPduID,a.parent_id as parent_id
+    from tb_pdu_relation a
+    LEFT JOIN tb_pdu_relation b on  a.pduID = b.parent_id
+    where a.parent_id &lt;&gt; ""  and  a.pduID &lt;&gt; #{pduID,jdbcType=INTEGER}
+
+  </select>
 </mapper>

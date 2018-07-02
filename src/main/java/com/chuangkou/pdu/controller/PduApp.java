@@ -1,33 +1,64 @@
 package com.chuangkou.pdu.controller;
 
-import com.chuangkou.pdu.bean.*;
-import com.chuangkou.pdu.entity.*;
-import com.chuangkou.pdu.service.*;
-import com.chuangkou.pdu.thread.PduActionThread;
-import com.chuangkou.pdu.thread.PduClockSetThread;
-import com.chuangkou.pdu.thread.PduWarningSetThread;
-import com.chuangkou.pdu.util.LogUtil;
-import com.chuangkou.pdu.util.MyException;
-import com.chuangkou.pdu.util.StringUtil;
-import com.chuangkou.pdu.util.TokenUtil;
-import com.chuangkou.pdu.util.PropertiesUtils;
-import com.google.gson.Gson;
-import net.sf.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.chuangkou.pdu.bean.DeviceToGroup;
+import com.chuangkou.pdu.bean.GetDeviceRelationshipList;
+import com.chuangkou.pdu.bean.GetGroupDeviceInfo;
+import com.chuangkou.pdu.bean.GetNewDeviceList;
+import com.chuangkou.pdu.bean.GetPduInfoHistory;
+import com.chuangkou.pdu.bean.GetTimingListBean;
+import com.chuangkou.pdu.bean.MsgBean;
+import com.chuangkou.pdu.entity.Pdu;
+import com.chuangkou.pdu.entity.PduClock;
+import com.chuangkou.pdu.entity.PduGroup;
+import com.chuangkou.pdu.entity.PduGroupRelation;
+import com.chuangkou.pdu.entity.PduInfo;
+import com.chuangkou.pdu.entity.PduInfoTemp;
+import com.chuangkou.pdu.entity.PduRelation;
+import com.chuangkou.pdu.entity.PduTemporary;
+import com.chuangkou.pdu.entity.Token;
+import com.chuangkou.pdu.service.PduClockService;
+import com.chuangkou.pdu.service.PduGroupRelationService;
+import com.chuangkou.pdu.service.PduGroupService;
+import com.chuangkou.pdu.service.PduInfoService;
+import com.chuangkou.pdu.service.PduOldLineService;
+import com.chuangkou.pdu.service.PduRelationService;
+import com.chuangkou.pdu.service.PduService;
+import com.chuangkou.pdu.service.PduTemporaryService;
+import com.chuangkou.pdu.service.RoleService;
+import com.chuangkou.pdu.thread.PduActionThread;
+import com.chuangkou.pdu.util.LogUtil;
+import com.chuangkou.pdu.util.PropertiesUtils;
+import com.chuangkou.pdu.util.StringUtil;
+import com.chuangkou.pdu.util.TokenUtil;
+import com.google.gson.Gson;
+
+import net.sf.json.JSONObject;
 
 /**
  * @Author:
@@ -1995,7 +2026,6 @@ public class PduApp extends BaseController {
             out = response.getWriter();
             GetDeviceRelationshipList = new GetDeviceRelationshipList();
 
-
             List<GetDeviceRelationshipList.DeviceListBean> switchInPutList = new ArrayList<com.chuangkou.pdu.bean.GetDeviceRelationshipList.DeviceListBean>();
 
             //搜索所有parent_id为空的设备
@@ -2011,7 +2041,6 @@ public class PduApp extends BaseController {
                 GetDeviceRelationshipList.DeviceListBean switchBean = getSwitchPduBean(topPdu.getPduID());
 
                 List<GetDeviceRelationshipList.DeviceListBean.ChildrensBean> childrensBeanList = new ArrayList<GetDeviceRelationshipList.DeviceListBean.ChildrensBean>();
-
 
                 List<PduRelation> onePduRelationList = new ArrayList<PduRelation>();
                 onePduRelationList = pduRelationService.selectBySubChildrensSwitcheAndPlugs(topPdu.getPduID());
@@ -2083,22 +2112,51 @@ public class PduApp extends BaseController {
             e.printStackTrace();
         }
 
-        MsgBean<GetDeviceRelationshipList> msgBean = MsgBean.getInstance();
-        msgBean.setData(GetDeviceRelationshipList);
-        out.print(msgBean.toJsonString());
+      //MsgBean<GetDeviceRelationshipList> msgBean = MsgBean.getInstance();
+//      msgBean.setData(GetDeviceRelationshipList);
+//      out.print(msgBean.toJsonString());
+        String filePath = request.getSession().getServletContext().getRealPath("")+"/html/device_tree_original.json";
+        System.out.println(filePath);
+        out.print(readFile(filePath,"gbk"));
         out.flush();
         out.close();
 
 
     }
 
+    private String readFile(String filePath,String encoding) {
+    	BufferedReader br = null;
+    	StringBuilder stringBuilder = new StringBuilder();
+		try {			
+	         File filename = new File(filePath); // 要读取以上路径的input。txt文件          
+			 br = new BufferedReader(new InputStreamReader(new FileInputStream(filename))); // 建立一个对象，它把文件内容转成计算机能读懂的语言  
+	         String line = "";  
+	         line = br.readLine();  
+	         while (line != null) {  
+	        	 stringBuilder.append(new String(line.getBytes(),encoding)+"\n");
+	             line = br.readLine(); // 一次读入一行数据  	             
+	         }  
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(br!=null){
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}     
+        return stringBuilder.toString();
+    	
+    }
+    
 
     /**
      * @Author:xulei
      * @Description:根据空开设备ID 搜索空开设备的info信息
      * @Date:2018-06-14
      */
-
     public GetDeviceRelationshipList.DeviceListBean getSwitchPduBean(int PduID) {
 
         PduInfoTemp pduInfoTemp = new PduInfoTemp();
@@ -2588,11 +2646,11 @@ public class PduApp extends BaseController {
         return childList;
     }
     
-    @RequestMapping("/device/device_tree")
-    public String deviceTree(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
-        System.out.print(request.getSession().getServletContext().getRealPath(""));
-        //request.getRequestDispatcher("device_tree.html").forward(request, response);
-        return "/device_tree";
-    }
+//    @RequestMapping("/device/device_tree")
+//    public String deviceTree(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
+//        System.out.print(request.getSession().getServletContext().getRealPath(""));
+//        //request.getRequestDispatcher("device_tree.html").forward(request, response);
+//        return "/device_tree";
+//    }
 }
 
