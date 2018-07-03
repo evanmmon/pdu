@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -2021,6 +2023,7 @@ public class PduApp extends BaseController {
         try {
             request.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=UTF-8");
+            response.setHeader("Access-Control-Allow-Origin", "*"); 
 //        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             out = response.getWriter();
             getDeviceRelationshipList = new GetDeviceRelationshipList();
@@ -2116,11 +2119,12 @@ public class PduApp extends BaseController {
        
         String filePath = request.getSession().getServletContext().getRealPath("")+"/html/device_tree_original.json";
         System.out.println(filePath);
-        out.print(readFile(filePath,"utf-8"));
+        out.print(readFile(filePath,"utf-8"));         
         out.flush();
         out.close();
     }
 
+    
     
     private String readFile(String filePath,String encoding) {
     	BufferedReader br = null;
@@ -2643,11 +2647,11 @@ public class PduApp extends BaseController {
         return childList;
     }
     
-//    @RequestMapping("/device/device_tree")
-//    public String deviceTree(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
-//        System.out.print(request.getSession().getServletContext().getRealPath(""));
-//        //request.getRequestDispatcher("device_tree.html").forward(request, response);
-//        return "/device_tree";
-//    }
+    @RequestMapping("/device/device_tree")
+    public String deviceTree(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
+        System.out.print(request.getSession().getServletContext().getRealPath(""));
+        //request.getRequestDispatcher("device_tree.html").forward(request, response);
+        return "/device_tree";
+    }
 }
 
